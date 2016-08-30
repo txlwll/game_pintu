@@ -1,0 +1,128 @@
+.container {
+    background-color: #cccccc;
+}
+
+
+/*PingtuHeader 样式*/
+.pingtu-header {
+    width: 100%;
+    padding: 5rem 2rem 1rem;
+    text-align: center;
+    box-sizing: border-box;
+}
+.pingtu-header h1 {
+    margin: 0.5rem auto;
+    font-size: 2rem;
+    color: #9650ec;
+}
+.gift-box {
+    width: 80%;
+    margin: 0 auto;
+    background-color: #fff;
+    border: solid 2px #333;
+    border-radius: 10px;
+    font-weight: bold;
+    overflow: hidden;
+}
+.gift-box p {
+    margin-top: 0.1rem;
+    padding: 0.4rem 0;
+    color: #fff;
+    font-size: 1.1rem;
+    line-height: 1.1rem;
+    background-color: #ecd780;
+    border-radius: 10px;
+    box-sizing: border-box;
+}
+.gift-box span {
+    font-size: 1.5rem;
+    line-height: 1.5rem;
+    color: #ec6035
+}
+
+/*Gamerule样式*/
+.game-rule {
+    width: 45%;
+    margin: 3rem auto;
+    padding: 0.8rem 1rem 1.5rem;
+    font-size: 1.0rem;
+    text-align: center;
+    background-color: #ecc162;
+    border-radius: 20px;
+    font-weight: bold;
+}
+.game-rule h4 {
+    margin-bottom: 0.5rem;
+    color: #ec5c16;
+}
+.game-rule p {
+    padding-bottom: 0.3rem;
+    color: #333;
+}
+
+/*GameBtn 样式*/
+.game-btn {
+    width: 10rem;
+    height: 3rem;
+    margin: 2rem auto;
+    text-align: center;
+    background-color: #fff;
+    overflow: hidden;
+    border-radius: 50px;
+    line-height: 3rem;
+    border:solid 2px #333333;
+    box-sizing: border-box;
+}
+.game-btn .game-status {
+    width: 10rem;
+    height: 3rem;
+    margin-top: 0.05rem;
+    font-size: 1.5rem;
+    color: #d41d08;
+    font-weight: bold;
+    border-radius: 50px;
+    background-color: #bf7dec;
+    border: none;
+}
+.game-btn .game-status.is-disable {
+    background-color: #cccccc;
+}
+/*GameContain样式*/
+.game-contain {
+    width: 320px;
+    min-width: 320px;
+    max-width: 750px;
+    margin: 0 auto;
+    background-color: #fff;
+    border: solid 2px #333;
+    border-radius: 20px;
+    box-sizing: border-box;
+    overflow: hidden;
+}
+.game-contain-detail {
+    width: 320px;
+    margin-top: 0.1rem;
+    margin-left: 0.1rem;
+    border-radius: 15px;
+    box-sizing: border-box;
+    background-color: #ffae0c;
+    text-align: center;
+    font-size: 1rem;
+    color: #333;
+}
+.game-contain-detail p {
+    padding-top: 0.5rem;
+}
+.game-contain-detail img {
+    width: 280px;
+    height: 280px;
+    margin: 1rem 0;
+    margin-left: -0.4rem;
+    border: solid 2px #000000;
+}
+
+
+
+
+
+
