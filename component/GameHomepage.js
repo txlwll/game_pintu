@@ -1,8 +1,8 @@
-
 import PintuHeader from './PintuHeader'
 import GameRule from './GameRule'
 import GameBtn from './GameBtn'
 import GameContain from './GameContain'
+import Dialog from './Dialog'
 
 require('../css/game.css')
 
@@ -11,7 +11,7 @@ var playInterval = null;
 
 
 class GameHomepage extends React.Component {
-    constructor(props){
+    constructor(props) {
         super(props);
         this.state = {
             isUserStarted: false, //是否参与活动
@@ -21,10 +21,11 @@ class GameHomepage extends React.Component {
             gameTimeout: 60,       //游戏结束时间倒计时
         };
     }
+
     //组件挂载后初始化game
     // componentDidMount() {
     //     game = new Puzzle('puzzle', 280, 280, 'images/chocolate_280.png', 3, true);
-        // console.log($('#puzzle'))
+    // console.log($('#puzzle'))
     // }
 
     // 跳转到游戏
@@ -36,7 +37,7 @@ class GameHomepage extends React.Component {
         game = new Puzzle('puzzle', 280, 280, 'images/chocolate_280.png', 3, true);
     }
 
-        //游戏自动倒计时10秒
+    //游戏自动倒计时10秒
     autoPlay = () => {
         this.startPlayInterval();
         return false;
@@ -44,7 +45,7 @@ class GameHomepage extends React.Component {
 
     // 点按钮直接进入游戏界面
     startPlay = () => {
-        if(this.state.isStarted === true){
+        if (this.state.isStarted === true) {
             return false
         }
         clearInterval(playInterval);
@@ -59,30 +60,30 @@ class GameHomepage extends React.Component {
 
 
     //游戏倒计时10秒动作
-    startPlayInterval = () =>{
+    startPlayInterval = () => {
         playInterval = setInterval(() => {
-        this.setState({
-            playTimeout: this.state.playTimeout - 1
-        })
-        if (this.state.playTimeout <= 0){
-            clearInterval(playInterval)
             this.setState({
-                gameStarted: true,
-                isStarted: true,
-            });
-            this.startGameInterval();
-            game.start();
-        }
-    },1000)
+                playTimeout: this.state.playTimeout - 1
+            })
+            if (this.state.playTimeout <= 0) {
+                clearInterval(playInterval)
+                this.setState({
+                    gameStarted: true,
+                    isStarted: true,
+                });
+                this.startGameInterval();
+                game.start();
+            }
+        }, 1000)
     }
 
     // 游戏结束倒计时60秒
-    startGameInterval = () =>{
-        const gameInterval = setInterval(() =>{
+    startGameInterval = () => {
+        const gameInterval = setInterval(() => {
             this.setState({
                 gameTimeout: this.state.gameTimeout - 1
             });
-            if(this.state.gameTimeout <= 0){
+            if (this.state.gameTimeout <= 0) {
                 clearInterval(gameInterval)
                 this.setState({
                     playTimeout: 10,
@@ -91,36 +92,53 @@ class GameHomepage extends React.Component {
                     gameTimeout: 60,
                 });
                 game.shuffle();
-                this.autotPlay();
+                this.autoPlay();
             }
             else {
-                if(game.isOkay()){
+                if (game.isOkay()) {
                     clearInterval(gameInterval);
                     this.setState({
                         isSuccess: true,
-                    })
+                    });
                 };
             }
-        },1000)
+        }, 1000)
     }
 
-    render (){
+    //弹出框关闭
+    handleHideDialog = () =>{
+        this.setState({
+            playTimeout: 10,
+            isStarted: false,
+            gameStarted: false,
+            isSuccess: false,
+            gameTimeout: 60,
+        });
+        game.shuffle();
+    }
+
+    render() {
         return (
-            <div className="container" style={{background: this.state.isUserStarted ? '#DE5E5E' : '#ccc'}}>
+            <div className="container">
                 <PintuHeader />
                 <div className="game-content">
-                    { this.state.isUserStarted ?
-                        <GameContain isStarted = 'false'
-                                     playTimeout = {this.state.playTimeout}
-                                     gameStarted = {this.state.gameStarted}
-                                     gameTimeout = {this.state.gameTimeout}
-                    />
-                        :
-                        <GameRule /> }
+                    <div style={{display: this.state.isUserStarted ? 'block' : 'none'}}>
+                        <GameContain isStarted='false'
+                                     playTimeout={this.state.playTimeout}
+                                     gameStarted={this.state.gameStarted}
+                                     gameTimeout={this.state.gameTimeout}
+                        />
+                    </div>
+                    <div style={{display: this.state.isUserStarted ? 'none' : 'block'}}>
+                        <GameRule />
+                    </div>
                 </div>
                 <GameBtn btnText={this.state.isUserStarted ? '看完，开始！' : '立即开始'}
-                         onUserClick = {this.state.isUserStarted ? this.startPlay : this.goToPlay}
-                         isDisable = {this.state.isStarted}
+                         onUserClick={this.state.isUserStarted ? this.startPlay : this.goToPlay}
+                         isDisable={this.state.isStarted}
+                />
+                <Dialog isShow = {this.state.isSuccess}
+                        hideDialog = {this.handleHideDialog}
                 />
             </div>
         )

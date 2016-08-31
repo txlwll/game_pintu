@@ -21456,6 +21456,10 @@
 	
 	var _GameContain2 = _interopRequireDefault(_GameContain);
 	
+	var _Dialog = __webpack_require__(184);
+	
+	var _Dialog2 = _interopRequireDefault(_Dialog);
+	
 	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 	
 	function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
@@ -21535,7 +21539,7 @@
 	                        gameTimeout: 60
 	                    });
 	                    game.shuffle();
-	                    _this.autotPlay();
+	                    _this.autoPlay();
 	                } else {
 	                    if (game.isOkay()) {
 	                        clearInterval(gameInterval);
@@ -21547,6 +21551,17 @@
 	            }, 1000);
 	        };
 	
+	        _this.handleHideDialog = function () {
+	            _this.setState({
+	                playTimeout: 10,
+	                isStarted: false,
+	                gameStarted: false,
+	                isSuccess: false,
+	                gameTimeout: 60
+	            });
+	            game.shuffle();
+	        };
+	
 	        _this.state = {
 	            isUserStarted: false, //是否参与活动
 	            playTimeout: 10, //游戏开始倒计时
@@ -21555,6 +21570,7 @@
 	            gameTimeout: 60 };
 	        return _this;
 	    }
+	
 	    //组件挂载后初始化game
 	    // componentDidMount() {
 	    //     game = new Puzzle('puzzle', 280, 280, 'images/chocolate_280.png', 3, true);
@@ -21576,25 +21592,40 @@
 	    // 游戏结束倒计时60秒
 	
 	
+	    //弹出框关闭
+	
+	
 	    _createClass(GameHomepage, [{
 	        key: 'render',
 	        value: function render() {
 	            return React.createElement(
 	                'div',
-	                { className: 'container', style: { background: this.state.isUserStarted ? '#DE5E5E' : '#ccc' } },
+	                { className: 'container' },
 	                React.createElement(_PintuHeader2.default, null),
 	                React.createElement(
 	                    'div',
 	                    { className: 'game-content' },
-	                    this.state.isUserStarted ? React.createElement(_GameContain2.default, { isStarted: 'false',
-	                        playTimeout: this.state.playTimeout,
-	                        gameStarted: this.state.gameStarted,
-	                        gameTimeout: this.state.gameTimeout
-	                    }) : React.createElement(_GameRule2.default, null)
+	                    React.createElement(
+	                        'div',
+	                        { style: { display: this.state.isUserStarted ? 'block' : 'none' } },
+	                        React.createElement(_GameContain2.default, { isStarted: 'false',
+	                            playTimeout: this.state.playTimeout,
+	                            gameStarted: this.state.gameStarted,
+	                            gameTimeout: this.state.gameTimeout
+	                        })
+	                    ),
+	                    React.createElement(
+	                        'div',
+	                        { style: { display: this.state.isUserStarted ? 'none' : 'block' } },
+	                        React.createElement(_GameRule2.default, null)
+	                    )
 	                ),
 	                React.createElement(_GameBtn2.default, { btnText: this.state.isUserStarted ? '看完，开始！' : '立即开始',
 	                    onUserClick: this.state.isUserStarted ? this.startPlay : this.goToPlay,
 	                    isDisable: this.state.isStarted
+	                }),
+	                React.createElement(_Dialog2.default, { isShow: this.state.isSuccess,
+	                    hideDialog: this.handleHideDialog
 	                })
 	            );
 	        }
@@ -21739,16 +21770,16 @@
 	
 	function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
 	
-	var CommonBtn = function (_React$Component) {
-	    _inherits(CommonBtn, _React$Component);
+	var GameBtn = function (_React$Component) {
+	    _inherits(GameBtn, _React$Component);
 	
-	    function CommonBtn() {
-	        _classCallCheck(this, CommonBtn);
+	    function GameBtn() {
+	        _classCallCheck(this, GameBtn);
 	
-	        return _possibleConstructorReturn(this, (CommonBtn.__proto__ || Object.getPrototypeOf(CommonBtn)).apply(this, arguments));
+	        return _possibleConstructorReturn(this, (GameBtn.__proto__ || Object.getPrototypeOf(GameBtn)).apply(this, arguments));
 	    }
 	
-	    _createClass(CommonBtn, [{
+	    _createClass(GameBtn, [{
 	        key: 'render',
 	        value: function render() {
 	            return React.createElement(
@@ -21764,10 +21795,10 @@
 	        }
 	    }]);
 	
-	    return CommonBtn;
+	    return GameBtn;
 	}(React.Component);
 	
-	exports.default = CommonBtn;
+	exports.default = GameBtn;
 	/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(166)))
 
 /***/ },
@@ -21817,7 +21848,11 @@
 	                        ),
 	                        "秒时间看原图哦"
 	                    ),
-	                    React.createElement("img", { src: __webpack_require__(177), alt: "#" })
+	                    React.createElement(
+	                        "div",
+	                        { className: "game-img" },
+	                        React.createElement("img", { src: __webpack_require__(177), alt: "#" })
+	                    )
 	                ),
 	                React.createElement(
 	                    "div",
@@ -21908,7 +21943,7 @@
 	
 	
 	// module
-	exports.push([module.id, ".container {\n    background-color: #cccccc;\n}\n\n\n/*PingtuHeader 样式*/\n.pingtu-header {\n    width: 100%;\n    padding: 5rem 2rem 1rem;\n    text-align: center;\n    box-sizing: border-box;\n}\n.pingtu-header h1 {\n    margin: 0.5rem auto;\n    font-size: 2rem;\n    color: #9650ec;\n}\n.gift-box {\n    width: 80%;\n    margin: 0 auto;\n    background-color: #fff;\n    border: solid 2px #333;\n    border-radius: 10px;\n    font-weight: bold;\n    overflow: hidden;\n}\n.gift-box p {\n    margin-top: 0.1rem;\n    padding: 0.4rem 0;\n    color: #fff;\n    font-size: 1.1rem;\n    line-height: 1.1rem;\n    background-color: #ecd780;\n    border-radius: 10px;\n    box-sizing: border-box;\n}\n.gift-box span {\n    font-size: 1.5rem;\n    line-height: 1.5rem;\n    color: #ec6035\n}\n\n/*Gamerule样式*/\n.game-rule {\n    width: 45%;\n    margin: 3rem auto;\n    padding: 0.8rem 1rem 1.5rem;\n    font-size: 1.0rem;\n    text-align: center;\n    background-color: #ecc162;\n    border-radius: 20px;\n    font-weight: bold;\n}\n.game-rule h4 {\n    margin-bottom: 0.5rem;\n    color: #ec5c16;\n}\n.game-rule p {\n    padding-bottom: 0.3rem;\n    color: #333;\n}\n\n/*GameBtn 样式*/\n.game-btn {\n    width: 10rem;\n    height: 3rem;\n    margin: 2rem auto;\n    text-align: center;\n    background-color: #fff;\n    overflow: hidden;\n    border-radius: 50px;\n    line-height: 3rem;\n    border:solid 2px #333333;\n    box-sizing: border-box;\n}\n.game-btn .game-status {\n    width: 10rem;\n    height: 3rem;\n    margin-top: 0.05rem;\n    font-size: 1.5rem;\n    color: #d41d08;\n    font-weight: bold;\n    border-radius: 50px;\n    background-color: #bf7dec;\n    border: none;\n}\n.game-btn .game-status.is-disable {\n    background-color: #cccccc;\n}\n/*GameContain样式*/\n.game-contain {\n    width: 320px;\n    min-width: 320px;\n    max-width: 750px;\n    margin: 0 auto;\n    background-color: #fff;\n    border: solid 2px #333;\n    border-radius: 20px;\n    box-sizing: border-box;\n    overflow: hidden;\n}\n.game-contain-detail {\n    width: 320px;\n    margin-top: 0.1rem;\n    margin-left: 0.1rem;\n    border-radius: 15px;\n    box-sizing: border-box;\n    background-color: #ffae0c;\n    text-align: center;\n    font-size: 1rem;\n    color: #333;\n}\n.game-contain-detail p {\n    padding-top: 0.5rem;\n}\n.game-contain-detail img {\n    width: 280px;\n    height: 280px;\n    margin: 1rem 0;\n    margin-left: -0.4rem;\n    border: solid 2px #000000;\n}\n.game-contain-detail .game-img {\n    width: 280px;\n    margin: 0 auto;\n}\n\n\n\n\n\n\n", "", {"version":3,"sources":["/./css/game.css"],"names":[],"mappings":"AAAA;IACI,0BAA0B;CAC7B;;;AAGD,mBAAmB;AACnB;IACI,YAAY;IACZ,wBAAwB;IACxB,mBAAmB;IACnB,uBAAuB;CAC1B;AACD;IACI,oBAAoB;IACpB,gBAAgB;IAChB,eAAe;CAClB;AACD;IACI,WAAW;IACX,eAAe;IACf,uBAAuB;IACvB,uBAAuB;IACvB,oBAAoB;IACpB,kBAAkB;IAClB,iBAAiB;CACpB;AACD;IACI,mBAAmB;IACnB,kBAAkB;IAClB,YAAY;IACZ,kBAAkB;IAClB,oBAAoB;IACpB,0BAA0B;IAC1B,oBAAoB;IACpB,uBAAuB;CAC1B;AACD;IACI,kBAAkB;IAClB,oBAAoB;IACpB,cAAc;CACjB;;AAED,cAAc;AACd;IACI,WAAW;IACX,kBAAkB;IAClB,4BAA4B;IAC5B,kBAAkB;IAClB,mBAAmB;IACnB,0BAA0B;IAC1B,oBAAoB;IACpB,kBAAkB;CACrB;AACD;IACI,sBAAsB;IACtB,eAAe;CAClB;AACD;IACI,uBAAuB;IACvB,YAAY;CACf;;AAED,cAAc;AACd;IACI,aAAa;IACb,aAAa;IACb,kBAAkB;IAClB,mBAAmB;IACnB,uBAAuB;IACvB,iBAAiB;IACjB,oBAAoB;IACpB,kBAAkB;IAClB,yBAAyB;IACzB,uBAAuB;CAC1B;AACD;IACI,aAAa;IACb,aAAa;IACb,oBAAoB;IACpB,kBAAkB;IAClB,eAAe;IACf,kBAAkB;IAClB,oBAAoB;IACpB,0BAA0B;IAC1B,aAAa;CAChB;AACD;IACI,0BAA0B;CAC7B;AACD,iBAAiB;AACjB;IACI,aAAa;IACb,iBAAiB;IACjB,iBAAiB;IACjB,eAAe;IACf,uBAAuB;IACvB,uBAAuB;IACvB,oBAAoB;IACpB,uBAAuB;IACvB,iBAAiB;CACpB;AACD;IACI,aAAa;IACb,mBAAmB;IACnB,oBAAoB;IACpB,oBAAoB;IACpB,uBAAuB;IACvB,0BAA0B;IAC1B,mBAAmB;IACnB,gBAAgB;IAChB,YAAY;CACf;AACD;IACI,oBAAoB;CACvB;AACD;IACI,aAAa;IACb,cAAc;IACd,eAAe;IACf,qBAAqB;IACrB,0BAA0B;CAC7B;AACD;IACI,aAAa;IACb,eAAe;CAClB","file":"game.css","sourcesContent":[".container {\n    background-color: #cccccc;\n}\n\n\n/*PingtuHeader 样式*/\n.pingtu-header {\n    width: 100%;\n    padding: 5rem 2rem 1rem;\n    text-align: center;\n    box-sizing: border-box;\n}\n.pingtu-header h1 {\n    margin: 0.5rem auto;\n    font-size: 2rem;\n    color: #9650ec;\n}\n.gift-box {\n    width: 80%;\n    margin: 0 auto;\n    background-color: #fff;\n    border: solid 2px #333;\n    border-radius: 10px;\n    font-weight: bold;\n    overflow: hidden;\n}\n.gift-box p {\n    margin-top: 0.1rem;\n    padding: 0.4rem 0;\n    color: #fff;\n    font-size: 1.1rem;\n    line-height: 1.1rem;\n    background-color: #ecd780;\n    border-radius: 10px;\n    box-sizing: border-box;\n}\n.gift-box span {\n    font-size: 1.5rem;\n    line-height: 1.5rem;\n    color: #ec6035\n}\n\n/*Gamerule样式*/\n.game-rule {\n    width: 45%;\n    margin: 3rem auto;\n    padding: 0.8rem 1rem 1.5rem;\n    font-size: 1.0rem;\n    text-align: center;\n    background-color: #ecc162;\n    border-radius: 20px;\n    font-weight: bold;\n}\n.game-rule h4 {\n    margin-bottom: 0.5rem;\n    color: #ec5c16;\n}\n.game-rule p {\n    padding-bottom: 0.3rem;\n    color: #333;\n}\n\n/*GameBtn 样式*/\n.game-btn {\n    width: 10rem;\n    height: 3rem;\n    margin: 2rem auto;\n    text-align: center;\n    background-color: #fff;\n    overflow: hidden;\n    border-radius: 50px;\n    line-height: 3rem;\n    border:solid 2px #333333;\n    box-sizing: border-box;\n}\n.game-btn .game-status {\n    width: 10rem;\n    height: 3rem;\n    margin-top: 0.05rem;\n    font-size: 1.5rem;\n    color: #d41d08;\n    font-weight: bold;\n    border-radius: 50px;\n    background-color: #bf7dec;\n    border: none;\n}\n.game-btn .game-status.is-disable {\n    background-color: #cccccc;\n}\n/*GameContain样式*/\n.game-contain {\n    width: 320px;\n    min-width: 320px;\n    max-width: 750px;\n    margin: 0 auto;\n    background-color: #fff;\n    border: solid 2px #333;\n    border-radius: 20px;\n    box-sizing: border-box;\n    overflow: hidden;\n}\n.game-contain-detail {\n    width: 320px;\n    margin-top: 0.1rem;\n    margin-left: 0.1rem;\n    border-radius: 15px;\n    box-sizing: border-box;\n    background-color: #ffae0c;\n    text-align: center;\n    font-size: 1rem;\n    color: #333;\n}\n.game-contain-detail p {\n    padding-top: 0.5rem;\n}\n.game-contain-detail img {\n    width: 280px;\n    height: 280px;\n    margin: 1rem 0;\n    margin-left: -0.4rem;\n    border: solid 2px #000000;\n}\n.game-contain-detail .game-img {\n    width: 280px;\n    margin: 0 auto;\n}\n\n\n\n\n\n\n"],"sourceRoot":"webpack://"}]);
+	exports.push([module.id, ".container {\n    background-color: #cccccc;\n}\n\n\n/*PingtuHeader 样式*/\n.pingtu-header {\n    width: 100%;\n    padding: 5rem 2rem 1rem;\n    text-align: center;\n    box-sizing: border-box;\n}\n.pingtu-header h1 {\n    margin: 0.5rem auto;\n    font-size: 2rem;\n    color: #9650ec;\n}\n.gift-box {\n    width: 80%;\n    margin: 0 auto;\n    background-color: #fff;\n    border: solid 2px #333;\n    border-radius: 10px;\n    font-weight: bold;\n    overflow: hidden;\n}\n.gift-box p {\n    margin-top: 0.1rem;\n    padding: 0.4rem 0;\n    color: #fff;\n    font-size: 1.1rem;\n    line-height: 1.1rem;\n    background-color: #ecd780;\n    border-radius: 10px;\n    box-sizing: border-box;\n}\n.gift-box span {\n    font-size: 1.5rem;\n    line-height: 1.5rem;\n    color: #ec6035\n}\n\n/*Gamerule样式*/\n.game-rule {\n    width: 45%;\n    margin: 3rem auto;\n    padding: 0.8rem 1rem 1.5rem;\n    font-size: 1.0rem;\n    text-align: center;\n    background-color: #ecc162;\n    border-radius: 20px;\n    font-weight: bold;\n}\n.game-rule h4 {\n    margin-bottom: 0.5rem;\n    color: #ec5c16;\n}\n.game-rule p {\n    padding-bottom: 0.3rem;\n    color: #333;\n}\n\n/*GameBtn 样式*/\n.game-btn {\n    width: 10rem;\n    height: 3rem;\n    margin: 2rem auto;\n    text-align: center;\n    background-color: #fff;\n    overflow: hidden;\n    border-radius: 50px;\n    line-height: 3rem;\n    border:solid 2px #333333;\n    box-sizing: border-box;\n}\n.game-btn .game-status {\n    width: 10rem;\n    height: 3rem;\n    margin-top: 0.05rem;\n    font-size: 1.5rem;\n    color: #d41d08;\n    font-weight: bold;\n    border-radius: 50px;\n    background-color: #bf7dec;\n    border: none;\n}\n.game-btn .game-status.is-disable {\n    background-color: #cccccc;\n}\n/*GameContain样式*/\n.game-contain {\n    width: 320px;\n    min-width: 320px;\n    max-width: 750px;\n    margin: 0 auto;\n    background-color: #fff;\n    border: solid 2px #333;\n    border-radius: 20px;\n    box-sizing: border-box;\n    overflow: hidden;\n}\n.game-contain-detail {\n    width: 320px;\n    padding: 0.1rem 1rem 1rem;\n    margin-top: 0.1rem;\n    margin-left: 0.1rem;\n    border-radius: 15px;\n    box-sizing: border-box;\n    background-color: #ffae0c;\n    text-align: center;\n    font-size: 1rem;\n    color: #333;\n}\n.game-contain-detail p {\n    padding: 1rem 0;\n    font-size: 1rem;\n    font-weight: bold;\n}\n.game-contain-detail img {\n    width: 100%;\n    height: 100%;\n    margin: 1rem 0;\n    border: solid 2px #000000;\n}\n.game-contain-detail .game-img {\n    width: 280px;\n    margin: 0 auto;\n    margin-left: -0.2rem;\n}\n\n\n/*Dialog 样式*/\n.dialog-mask {\n    position: fixed;\n    z-index: 1;\n    width: 100%;\n    height: 100%;\n    top: 0;\n    left: 0;\n    background-color: rgba(0,0,0,0.5);\n}\n.dialog-detail {\n    position: absolute;\n    width: 75%;\n    min-width: 200px;\n    max-width: 750px;\n    top: 50%;\n    height: 12rem;\n    left: 50%;\n    transform: translate(-50%,-50%);\n    background-color: #F4CD27;\n    text-align: center;\n    z-index: 13;\n    border-radius: 7px;\n}\n\n.dialog-hd {\n    position: relative;\n    padding: 1.25rem 0 0;\n}\n.dialog-hd h4 {\n    margin-bottom: 1rem;\n    font-weight: bold;\n    font-size: 1.5rem;\n    color: #333;\n    text-align: center;\n}\n.dialog-hd p{\n    font-size: 1.5rem;\n}\n.dialog-hd .dialog-close {\n    position: absolute;\n    top: -0.75rem;\n    right: -0.75rem;\n    width: 1.5rem;\n    height: 1.5rem;\n    border-radius: 50%;\n    background-color: #ffffff;\n    border: solid 2px #333;\n}\n.dialog-hd .dialog-close-btn {\n    position: absolute;\n    top: 0;\n    right: 0;\n    width: 1.5rem;\n    height: 1.5rem;\n    border-radius: 50%;\n    background: url(" + __webpack_require__(185) + ") no-repeat;\n    background-size: 100%;\n}\n\n.dialog-bd {\n    padding: 0 1.666667rem;\n    font-size: 1.25rem;\n    word-wrap: break-word;\n    word-break: break-all;\n}\n\n\n\n\n\n\n\n", "", {"version":3,"sources":["/./css/game.css"],"names":[],"mappings":"AAAA;IACI,0BAA0B;CAC7B;;;AAGD,mBAAmB;AACnB;IACI,YAAY;IACZ,wBAAwB;IACxB,mBAAmB;IACnB,uBAAuB;CAC1B;AACD;IACI,oBAAoB;IACpB,gBAAgB;IAChB,eAAe;CAClB;AACD;IACI,WAAW;IACX,eAAe;IACf,uBAAuB;IACvB,uBAAuB;IACvB,oBAAoB;IACpB,kBAAkB;IAClB,iBAAiB;CACpB;AACD;IACI,mBAAmB;IACnB,kBAAkB;IAClB,YAAY;IACZ,kBAAkB;IAClB,oBAAoB;IACpB,0BAA0B;IAC1B,oBAAoB;IACpB,uBAAuB;CAC1B;AACD;IACI,kBAAkB;IAClB,oBAAoB;IACpB,cAAc;CACjB;;AAED,cAAc;AACd;IACI,WAAW;IACX,kBAAkB;IAClB,4BAA4B;IAC5B,kBAAkB;IAClB,mBAAmB;IACnB,0BAA0B;IAC1B,oBAAoB;IACpB,kBAAkB;CACrB;AACD;IACI,sBAAsB;IACtB,eAAe;CAClB;AACD;IACI,uBAAuB;IACvB,YAAY;CACf;;AAED,cAAc;AACd;IACI,aAAa;IACb,aAAa;IACb,kBAAkB;IAClB,mBAAmB;IACnB,uBAAuB;IACvB,iBAAiB;IACjB,oBAAoB;IACpB,kBAAkB;IAClB,yBAAyB;IACzB,uBAAuB;CAC1B;AACD;IACI,aAAa;IACb,aAAa;IACb,oBAAoB;IACpB,kBAAkB;IAClB,eAAe;IACf,kBAAkB;IAClB,oBAAoB;IACpB,0BAA0B;IAC1B,aAAa;CAChB;AACD;IACI,0BAA0B;CAC7B;AACD,iBAAiB;AACjB;IACI,aAAa;IACb,iBAAiB;IACjB,iBAAiB;IACjB,eAAe;IACf,uBAAuB;IACvB,uBAAuB;IACvB,oBAAoB;IACpB,uBAAuB;IACvB,iBAAiB;CACpB;AACD;IACI,aAAa;IACb,0BAA0B;IAC1B,mBAAmB;IACnB,oBAAoB;IACpB,oBAAoB;IACpB,uBAAuB;IACvB,0BAA0B;IAC1B,mBAAmB;IACnB,gBAAgB;IAChB,YAAY;CACf;AACD;IACI,gBAAgB;IAChB,gBAAgB;IAChB,kBAAkB;CACrB;AACD;IACI,YAAY;IACZ,aAAa;IACb,eAAe;IACf,0BAA0B;CAC7B;AACD;IACI,aAAa;IACb,eAAe;IACf,qBAAqB;CACxB;;;AAGD,aAAa;AACb;IACI,gBAAgB;IAChB,WAAW;IACX,YAAY;IACZ,aAAa;IACb,OAAO;IACP,QAAQ;IACR,kCAAkC;CACrC;AACD;IACI,mBAAmB;IACnB,WAAW;IACX,iBAAiB;IACjB,iBAAiB;IACjB,SAAS;IACT,cAAc;IACd,UAAU;IACV,gCAAgC;IAChC,0BAA0B;IAC1B,mBAAmB;IACnB,YAAY;IACZ,mBAAmB;CACtB;;AAED;IACI,mBAAmB;IACnB,qBAAqB;CACxB;AACD;IACI,oBAAoB;IACpB,kBAAkB;IAClB,kBAAkB;IAClB,YAAY;IACZ,mBAAmB;CACtB;AACD;IACI,kBAAkB;CACrB;AACD;IACI,mBAAmB;IACnB,cAAc;IACd,gBAAgB;IAChB,cAAc;IACd,eAAe;IACf,mBAAmB;IACnB,0BAA0B;IAC1B,uBAAuB;CAC1B;AACD;IACI,mBAAmB;IACnB,OAAO;IACP,SAAS;IACT,cAAc;IACd,eAAe;IACf,mBAAmB;IACnB,oDAAiD;IACjD,sBAAsB;CACzB;;AAED;IACI,uBAAuB;IACvB,mBAAmB;IACnB,sBAAsB;IACtB,sBAAsB;CACzB","file":"game.css","sourcesContent":[".container {\n    background-color: #cccccc;\n}\n\n\n/*PingtuHeader 样式*/\n.pingtu-header {\n    width: 100%;\n    padding: 5rem 2rem 1rem;\n    text-align: center;\n    box-sizing: border-box;\n}\n.pingtu-header h1 {\n    margin: 0.5rem auto;\n    font-size: 2rem;\n    color: #9650ec;\n}\n.gift-box {\n    width: 80%;\n    margin: 0 auto;\n    background-color: #fff;\n    border: solid 2px #333;\n    border-radius: 10px;\n    font-weight: bold;\n    overflow: hidden;\n}\n.gift-box p {\n    margin-top: 0.1rem;\n    padding: 0.4rem 0;\n    color: #fff;\n    font-size: 1.1rem;\n    line-height: 1.1rem;\n    background-color: #ecd780;\n    border-radius: 10px;\n    box-sizing: border-box;\n}\n.gift-box span {\n    font-size: 1.5rem;\n    line-height: 1.5rem;\n    color: #ec6035\n}\n\n/*Gamerule样式*/\n.game-rule {\n    width: 45%;\n    margin: 3rem auto;\n    padding: 0.8rem 1rem 1.5rem;\n    font-size: 1.0rem;\n    text-align: center;\n    background-color: #ecc162;\n    border-radius: 20px;\n    font-weight: bold;\n}\n.game-rule h4 {\n    margin-bottom: 0.5rem;\n    color: #ec5c16;\n}\n.game-rule p {\n    padding-bottom: 0.3rem;\n    color: #333;\n}\n\n/*GameBtn 样式*/\n.game-btn {\n    width: 10rem;\n    height: 3rem;\n    margin: 2rem auto;\n    text-align: center;\n    background-color: #fff;\n    overflow: hidden;\n    border-radius: 50px;\n    line-height: 3rem;\n    border:solid 2px #333333;\n    box-sizing: border-box;\n}\n.game-btn .game-status {\n    width: 10rem;\n    height: 3rem;\n    margin-top: 0.05rem;\n    font-size: 1.5rem;\n    color: #d41d08;\n    font-weight: bold;\n    border-radius: 50px;\n    background-color: #bf7dec;\n    border: none;\n}\n.game-btn .game-status.is-disable {\n    background-color: #cccccc;\n}\n/*GameContain样式*/\n.game-contain {\n    width: 320px;\n    min-width: 320px;\n    max-width: 750px;\n    margin: 0 auto;\n    background-color: #fff;\n    border: solid 2px #333;\n    border-radius: 20px;\n    box-sizing: border-box;\n    overflow: hidden;\n}\n.game-contain-detail {\n    width: 320px;\n    padding: 0.1rem 1rem 1rem;\n    margin-top: 0.1rem;\n    margin-left: 0.1rem;\n    border-radius: 15px;\n    box-sizing: border-box;\n    background-color: #ffae0c;\n    text-align: center;\n    font-size: 1rem;\n    color: #333;\n}\n.game-contain-detail p {\n    padding: 1rem 0;\n    font-size: 1rem;\n    font-weight: bold;\n}\n.game-contain-detail img {\n    width: 100%;\n    height: 100%;\n    margin: 1rem 0;\n    border: solid 2px #000000;\n}\n.game-contain-detail .game-img {\n    width: 280px;\n    margin: 0 auto;\n    margin-left: -0.2rem;\n}\n\n\n/*Dialog 样式*/\n.dialog-mask {\n    position: fixed;\n    z-index: 1;\n    width: 100%;\n    height: 100%;\n    top: 0;\n    left: 0;\n    background-color: rgba(0,0,0,0.5);\n}\n.dialog-detail {\n    position: absolute;\n    width: 75%;\n    min-width: 200px;\n    max-width: 750px;\n    top: 50%;\n    height: 12rem;\n    left: 50%;\n    transform: translate(-50%,-50%);\n    background-color: #F4CD27;\n    text-align: center;\n    z-index: 13;\n    border-radius: 7px;\n}\n\n.dialog-hd {\n    position: relative;\n    padding: 1.25rem 0 0;\n}\n.dialog-hd h4 {\n    margin-bottom: 1rem;\n    font-weight: bold;\n    font-size: 1.5rem;\n    color: #333;\n    text-align: center;\n}\n.dialog-hd p{\n    font-size: 1.5rem;\n}\n.dialog-hd .dialog-close {\n    position: absolute;\n    top: -0.75rem;\n    right: -0.75rem;\n    width: 1.5rem;\n    height: 1.5rem;\n    border-radius: 50%;\n    background-color: #ffffff;\n    border: solid 2px #333;\n}\n.dialog-hd .dialog-close-btn {\n    position: absolute;\n    top: 0;\n    right: 0;\n    width: 1.5rem;\n    height: 1.5rem;\n    border-radius: 50%;\n    background: url(\"../images/close.png\") no-repeat;\n    background-size: 100%;\n}\n\n.dialog-bd {\n    padding: 0 1.666667rem;\n    font-size: 1.25rem;\n    word-wrap: break-word;\n    word-break: break-all;\n}\n\n\n\n\n\n\n\n"],"sourceRoot":"webpack://"}]);
 	
 	// exports
 
@@ -22260,6 +22295,85 @@
 	
 	// exports
 
+
+/***/ },
+/* 184 */
+/***/ function(module, exports, __webpack_require__) {
+
+	/* WEBPACK VAR INJECTION */(function(React) {'use strict';
+	
+	Object.defineProperty(exports, "__esModule", {
+	    value: true
+	});
+	
+	var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
+	
+	var _GameBtn = __webpack_require__(175);
+	
+	var _GameBtn2 = _interopRequireDefault(_GameBtn);
+	
+	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+	
+	function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+	
+	function _possibleConstructorReturn(self, call) { if (!self) { throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); } return call && (typeof call === "object" || typeof call === "function") ? call : self; }
+	
+	function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
+	
+	var Dialog = function (_React$Component) {
+	    _inherits(Dialog, _React$Component);
+	
+	    function Dialog() {
+	        _classCallCheck(this, Dialog);
+	
+	        return _possibleConstructorReturn(this, (Dialog.__proto__ || Object.getPrototypeOf(Dialog)).apply(this, arguments));
+	    }
+	
+	    _createClass(Dialog, [{
+	        key: 'render',
+	        value: function render() {
+	            return React.createElement(
+	                'div',
+	                { className: 'dialog-mask', style: { display: this.props.isShow ? 'block' : 'none' } },
+	                React.createElement(
+	                    'div',
+	                    { className: 'dialog-detail' },
+	                    React.createElement(
+	                        'div',
+	                        { className: 'dialog-hd' },
+	                        React.createElement(
+	                            'h4',
+	                            null,
+	                            '恭喜您获得'
+	                        ),
+	                        React.createElement(
+	                            'span',
+	                            { className: 'dialog-close ' },
+	                            React.createElement('span', { className: 'dialog-close-btn', onClick: this.props.hideDialog })
+	                        ),
+	                        React.createElement(
+	                            'p',
+	                            { className: 'cash' },
+	                            '100元现金劵'
+	                        )
+	                    ),
+	                    React.createElement(_GameBtn2.default, { btnText: '前往领取' })
+	                )
+	            );
+	        }
+	    }]);
+	
+	    return Dialog;
+	}(React.Component);
+	
+	exports.default = Dialog;
+	/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(166)))
+
+/***/ },
+/* 185 */
+/***/ function(module, exports) {
+
+	module.exports = "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABAAAAAQCAYAAAAf8/9hAAABPElEQVQ4T6VTQVLCQBDsTkg4yhP0BeIPkndYQvkC8GgJJ6S8wgsssXwHeUJ4gT4BjyQkY01gU8sSKSlz2p3JdE/37BDO9/oil36RDwQSEehqWoCUYFL4wfz+kV92Ce3L2ySbkTJwQQ/vnPVG4YOJ1QCLySYFcX26eJfVjvqj9o2eK4C/MR9Ci3DeH4dD7jRnn3VL4sWeJ+tCJAFwsY9/+2RUluwIy6X5t/DDK7rsFC++GwfJxzTr7kGgxbdPYfo+ySMbQLugq10E65bHWAsURNnMeVvKkkTHdFBNZ/G8Edc4G0RzCuQW15KbAABUmpXZADie1JxHEuxiV8IRiGB10kRtW6mMJ40m/jZGW7PxpHGM/35Ixo1znjIEq964XY347GUyT/homUxAPfG2+ZCQqF4uwUrApGwFM3edfwDwD9oOa6/wMwAAAABJRU5ErkJggg=="
 
 /***/ }
 /******/ ]);

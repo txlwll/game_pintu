@@ -1,5 +1,5 @@
 
-class CommonBtn extends React.Component {
+class GameBtn extends React.Component {
     render(){
         return (
             <div className="game-btn">
@@ -12,4 +12,4 @@ class CommonBtn extends React.Component {
     }
 }
 
-export default CommonBtn
+export default GameBtn
