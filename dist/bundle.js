@@ -52,7 +52,7 @@
 	
 	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 	
-	__webpack_require__(183);
+	__webpack_require__(182);
 	
 	ReactDOM.render(React.createElement(_GameHomepage2.default, null), document.getElementById('app'));
 	/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(1), __webpack_require__(166)))
@@ -197,25 +197,40 @@
 	var cachedSetTimeout;
 	var cachedClearTimeout;
 	
+	function defaultSetTimout() {
+	    throw new Error('setTimeout has not been defined');
+	}
+	function defaultClearTimeout () {
+	    throw new Error('clearTimeout has not been defined');
+	}
 	(function () {
 	    try {
-	        cachedSetTimeout = setTimeout;
-	    } catch (e) {
-	        cachedSetTimeout = function () {
-	            throw new Error('setTimeout is not defined');
+	        if (typeof setTimeout === 'function') {
+	            cachedSetTimeout = setTimeout;
+	        } else {
+	            cachedSetTimeout = defaultSetTimout;
 	        }
+	    } catch (e) {
+	        cachedSetTimeout = defaultSetTimout;
 	    }
 	    try {
-	        cachedClearTimeout = clearTimeout;
-	    } catch (e) {
-	        cachedClearTimeout = function () {
-	            throw new Error('clearTimeout is not defined');
+	        if (typeof clearTimeout === 'function') {
+	            cachedClearTimeout = clearTimeout;
+	        } else {
+	            cachedClearTimeout = defaultClearTimeout;
 	        }
+	    } catch (e) {
+	        cachedClearTimeout = defaultClearTimeout;
 	    }
 	} ())
 	function runTimeout(fun) {
 	    if (cachedSetTimeout === setTimeout) {
 	        //normal enviroments in sane situations
+	        return setTimeout(fun, 0);
+	    }
+	    // if setTimeout wasn't available but was latter defined
+	    if ((cachedSetTimeout === defaultSetTimout || !cachedSetTimeout) && setTimeout) {
+	        cachedSetTimeout = setTimeout;
 	        return setTimeout(fun, 0);
 	    }
 	    try {
@@ -236,6 +251,11 @@
 	function runClearTimeout(marker) {
 	    if (cachedClearTimeout === clearTimeout) {
 	        //normal enviroments in sane situations
+	        return clearTimeout(marker);
+	    }
+	    // if clearTimeout wasn't available but was latter defined
+	    if ((cachedClearTimeout === defaultClearTimeout || !cachedClearTimeout) && clearTimeout) {
+	        cachedClearTimeout = clearTimeout;
 	        return clearTimeout(marker);
 	    }
 	    try {
@@ -21444,7 +21464,10 @@
 	
 	function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
 	
-	__webpack_require__(179);
+	__webpack_require__(178);
+	
+	var game = null;
+	var playInterval = null;
 	
 	var GameHomepage = function (_React$Component) {
 	    _inherits(GameHomepage, _React$Component);
@@ -21455,38 +21478,50 @@
 	        var _this = _possibleConstructorReturn(this, (GameHomepage.__proto__ || Object.getPrototypeOf(GameHomepage)).call(this, props));
 	
 	        _this.goToPlay = function () {
+	            _this.autoPlay();
 	            _this.setState({
 	                isUserStarted: true
 	            });
+	            game = new Puzzle('puzzle', 280, 280, 'images/chocolate_280.png', 3, true);
+	        };
+	
+	        _this.autoPlay = function () {
+	            _this.startPlayInterval();
+	            return false;
 	        };
 	
 	        _this.startPlay = function () {
 	            if (_this.state.isStarted === true) {
 	                return false;
 	            }
+	            clearInterval(playInterval);
 	            _this.setState({
-	                isStarted: true
+	                isStarted: true,
+	                gameStarted: true,
+	                playTimeout: 0
 	            });
-	            _this.startPlayInterval();
-	            return false;
+	            _this.startGameInterval();
+	            game.start();
 	        };
 	
 	        _this.startPlayInterval = function () {
-	            var playInterval = setInterval(function () {
+	            playInterval = setInterval(function () {
 	                _this.setState({
 	                    playTimeout: _this.state.playTimeout - 1
 	                });
 	                if (_this.state.playTimeout <= 0) {
 	                    clearInterval(playInterval);
 	                    _this.setState({
-	                        gameStarted: true
+	                        gameStarted: true,
+	                        isStarted: true
 	                    });
-	                    _this.gameStart();
+	                    _this.startGameInterval();
+	                    game.start();
 	                }
 	            }, 1000);
 	        };
 	
-	        _this.gameStart = function () {
+	        _this.startGameInterval = function () {
 	            var gameInterval = setInterval(function () {
 	                _this.setState({
 	                    gameTimeout: _this.state.gameTimeout - 1
@@ -21499,8 +21534,15 @@
 	                        gameStarted: false,
 	                        gameTimeout: 60
 	                    });
+	                    game.shuffle();
+	                    _this.autotPlay();
 	                } else {
-	                    // alert('游戏成功！')
+	                    if (game.isOkay()) {
+	                        clearInterval(gameInterval);
+	                        _this.setState({
+	                            isSuccess: true
+	                        });
+	                    };
 	                }
 	            }, 1000);
 	        };
@@ -21513,10 +21555,22 @@
 	            gameTimeout: 60 };
 	        return _this;
 	    }
+	    //组件挂载后初始化game
+	    // componentDidMount() {
+	    //     game = new Puzzle('puzzle', 280, 280, 'images/chocolate_280.png', 3, true);
+	    // console.log($('#puzzle'))
+	    // }
+	
 	    // 跳转到游戏
 	
 	
-	    //开始倒计时10秒
+	    //游戏自动倒计时10秒
+	
+	
+	    // 点按钮直接进入游戏界面
+	
+	
+	    //游戏倒计时10秒动作
 	
 	
 	    // 游戏结束倒计时60秒
@@ -21771,15 +21825,37 @@
 	                    React.createElement(
 	                        "p",
 	                        null,
-	                        "还剩",
+	                        "还剩 ",
 	                        React.createElement(
 	                            "span",
 	                            null,
 	                            this.props.gameTimeout
 	                        ),
-	                        "秒完成拼图"
+	                        " 秒完成拼图 "
 	                    ),
-	                    React.createElement("img", { src: __webpack_require__(178), alt: "#" })
+	                    React.createElement(
+	                        "div",
+	                        { className: "game-img" },
+	                        React.createElement(
+	                            "div",
+	                            { className: "puzzle", id: "puzzle" },
+	                            React.createElement(
+	                                "div",
+	                                { className: "time", style: { display: 'none' } },
+	                                React.createElement(
+	                                    "span",
+	                                    null,
+	                                    "0"
+	                                ),
+	                                " ",
+	                                React.createElement(
+	                                    "span",
+	                                    null,
+	                                    "00:00.000"
+	                                )
+	                            )
+	                        )
+	                    )
 	                )
 	            );
 	        }
@@ -21795,32 +21871,26 @@
 /* 177 */
 /***/ function(module, exports, __webpack_require__) {
 
-	module.exports = __webpack_require__.p + "c864b1fa986a304136afaa6e44b723df.png";
+	module.exports = __webpack_require__.p + "dist/images/chocolate.png";
 
 /***/ },
 /* 178 */
 /***/ function(module, exports, __webpack_require__) {
 
-	module.exports = __webpack_require__.p + "b2fcd60fd56dca52bfbfa6db8974c54f.png";
-
-/***/ },
-/* 179 */
-/***/ function(module, exports, __webpack_require__) {
-
 	// style-loader: Adds some css to the DOM by adding a <style> tag
 	
 	// load the styles
-	var content = __webpack_require__(180);
+	var content = __webpack_require__(179);
 	if(typeof content === 'string') content = [[module.id, content, '']];
 	// add the styles to the DOM
-	var update = __webpack_require__(182)(content, {});
+	var update = __webpack_require__(181)(content, {});
 	if(content.locals) module.exports = content.locals;
 	// Hot Module Replacement
 	if(false) {
 		// When the styles change, update the <style> tags
 		if(!content.locals) {
-			module.hot.accept("!!./../node_modules/css-loader/index.js!./game.css", function() {
-				var newContent = require("!!./../node_modules/css-loader/index.js!./game.css");
+			module.hot.accept("!!./../node_modules/css-loader/index.js?sourceMap!./game.css", function() {
+				var newContent = require("!!./../node_modules/css-loader/index.js?sourceMap!./game.css");
 				if(typeof newContent === 'string') newContent = [[module.id, newContent, '']];
 				update(newContent);
 			});
@@ -21830,21 +21900,21 @@
 	}
 
 /***/ },
-/* 180 */
+/* 179 */
 /***/ function(module, exports, __webpack_require__) {
 
-	exports = module.exports = __webpack_require__(181)();
+	exports = module.exports = __webpack_require__(180)();
 	// imports
 	
 	
 	// module
-	exports.push([module.id, ".container {\r\n    background-color: #cccccc;\r\n}\r\n\r\n\r\n/*PingtuHeader 样式*/\r\n.pingtu-header {\r\n    width: 100%;\r\n    padding: 5rem 2rem 1rem;\r\n    text-align: center;\r\n    box-sizing: border-box;\r\n}\r\n.pingtu-header h1 {\r\n    margin: 0.5rem auto;\r\n    font-size: 2rem;\r\n    color: #9650ec;\r\n}\r\n.gift-box {\r\n    width: 80%;\r\n    margin: 0 auto;\r\n    background-color: #fff;\r\n    border: solid 2px #333;\r\n    border-radius: 10px;\r\n    font-weight: bold;\r\n    overflow: hidden;\r\n}\r\n.gift-box p {\r\n    margin-top: 0.1rem;\r\n    padding: 0.4rem 0;\r\n    color: #fff;\r\n    font-size: 1.1rem;\r\n    line-height: 1.1rem;\r\n    background-color: #ecd780;\r\n    border-radius: 10px;\r\n    box-sizing: border-box;\r\n}\r\n.gift-box span {\r\n    font-size: 1.5rem;\r\n    line-height: 1.5rem;\r\n    color: #ec6035\r\n}\r\n\r\n/*Gamerule样式*/\r\n.game-rule {\r\n    width: 45%;\r\n    margin: 3rem auto;\r\n    padding: 0.8rem 1rem 1.5rem;\r\n    font-size: 1.0rem;\r\n    text-align: center;\r\n    background-color: #ecc162;\r\n    border-radius: 20px;\r\n    font-weight: bold;\r\n}\r\n.game-rule h4 {\r\n    margin-bottom: 0.5rem;\r\n    color: #ec5c16;\r\n}\r\n.game-rule p {\r\n    padding-bottom: 0.3rem;\r\n    color: #333;\r\n}\r\n\r\n/*GameBtn 样式*/\r\n.game-btn {\r\n    width: 10rem;\r\n    height: 3rem;\r\n    margin: 2rem auto;\r\n    text-align: center;\r\n    background-color: #fff;\r\n    overflow: hidden;\r\n    border-radius: 50px;\r\n    line-height: 3rem;\r\n    border:solid 2px #333333;\r\n    box-sizing: border-box;\r\n}\r\n.game-btn .game-status {\r\n    width: 10rem;\r\n    height: 3rem;\r\n    margin-top: 0.05rem;\r\n    font-size: 1.5rem;\r\n    color: #d41d08;\r\n    font-weight: bold;\r\n    border-radius: 50px;\r\n    background-color: #bf7dec;\r\n    border: none;\r\n}\r\n.game-btn .game-status.is-disable {\r\n    background-color: #cccccc;\r\n}\r\n/*GameContain样式*/\r\n.game-contain {\r\n    width: 320px;\r\n    min-width: 320px;\r\n    max-width: 750px;\r\n    margin: 0 auto;\r\n    background-color: #fff;\r\n    border: solid 2px #333;\r\n    border-radius: 20px;\r\n    box-sizing: border-box;\r\n    overflow: hidden;\r\n}\r\n.game-contain-detail {\r\n    width: 320px;\r\n    margin-top: 0.1rem;\r\n    margin-left: 0.1rem;\r\n    border-radius: 15px;\r\n    box-sizing: border-box;\r\n    background-color: #ffae0c;\r\n    text-align: center;\r\n    font-size: 1rem;\r\n    color: #333;\r\n}\r\n.game-contain-detail p {\r\n    padding-top: 0.5rem;\r\n}\r\n.game-contain-detail img {\r\n    width: 280px;\r\n    height: 280px;\r\n    margin: 1rem 0;\r\n    margin-left: -0.4rem;\r\n    border: solid 2px #000000;\r\n}\r\n\r\n\r\n\r\n\r\n\r\n\r\n", ""]);
+	exports.push([module.id, ".container {\n    background-color: #cccccc;\n}\n\n\n/*PingtuHeader 样式*/\n.pingtu-header {\n    width: 100%;\n    padding: 5rem 2rem 1rem;\n    text-align: center;\n    box-sizing: border-box;\n}\n.pingtu-header h1 {\n    margin: 0.5rem auto;\n    font-size: 2rem;\n    color: #9650ec;\n}\n.gift-box {\n    width: 80%;\n    margin: 0 auto;\n    background-color: #fff;\n    border: solid 2px #333;\n    border-radius: 10px;\n    font-weight: bold;\n    overflow: hidden;\n}\n.gift-box p {\n    margin-top: 0.1rem;\n    padding: 0.4rem 0;\n    color: #fff;\n    font-size: 1.1rem;\n    line-height: 1.1rem;\n    background-color: #ecd780;\n    border-radius: 10px;\n    box-sizing: border-box;\n}\n.gift-box span {\n    font-size: 1.5rem;\n    line-height: 1.5rem;\n    color: #ec6035\n}\n\n/*Gamerule样式*/\n.game-rule {\n    width: 45%;\n    margin: 3rem auto;\n    padding: 0.8rem 1rem 1.5rem;\n    font-size: 1.0rem;\n    text-align: center;\n    background-color: #ecc162;\n    border-radius: 20px;\n    font-weight: bold;\n}\n.game-rule h4 {\n    margin-bottom: 0.5rem;\n    color: #ec5c16;\n}\n.game-rule p {\n    padding-bottom: 0.3rem;\n    color: #333;\n}\n\n/*GameBtn 样式*/\n.game-btn {\n    width: 10rem;\n    height: 3rem;\n    margin: 2rem auto;\n    text-align: center;\n    background-color: #fff;\n    overflow: hidden;\n    border-radius: 50px;\n    line-height: 3rem;\n    border:solid 2px #333333;\n    box-sizing: border-box;\n}\n.game-btn .game-status {\n    width: 10rem;\n    height: 3rem;\n    margin-top: 0.05rem;\n    font-size: 1.5rem;\n    color: #d41d08;\n    font-weight: bold;\n    border-radius: 50px;\n    background-color: #bf7dec;\n    border: none;\n}\n.game-btn .game-status.is-disable {\n    background-color: #cccccc;\n}\n/*GameContain样式*/\n.game-contain {\n    width: 320px;\n    min-width: 320px;\n    max-width: 750px;\n    margin: 0 auto;\n    background-color: #fff;\n    border: solid 2px #333;\n    border-radius: 20px;\n    box-sizing: border-box;\n    overflow: hidden;\n}\n.game-contain-detail {\n    width: 320px;\n    margin-top: 0.1rem;\n    margin-left: 0.1rem;\n    border-radius: 15px;\n    box-sizing: border-box;\n    background-color: #ffae0c;\n    text-align: center;\n    font-size: 1rem;\n    color: #333;\n}\n.game-contain-detail p {\n    padding-top: 0.5rem;\n}\n.game-contain-detail img {\n    width: 280px;\n    height: 280px;\n    margin: 1rem 0;\n    margin-left: -0.4rem;\n    border: solid 2px #000000;\n}\n.game-contain-detail .game-img {\n    width: 280px;\n    margin: 0 auto;\n}\n\n\n\n\n\n\n", "", {"version":3,"sources":["/./css/game.css"],"names":[],"mappings":"AAAA;IACI,0BAA0B;CAC7B;;;AAGD,mBAAmB;AACnB;IACI,YAAY;IACZ,wBAAwB;IACxB,mBAAmB;IACnB,uBAAuB;CAC1B;AACD;IACI,oBAAoB;IACpB,gBAAgB;IAChB,eAAe;CAClB;AACD;IACI,WAAW;IACX,eAAe;IACf,uBAAuB;IACvB,uBAAuB;IACvB,oBAAoB;IACpB,kBAAkB;IAClB,iBAAiB;CACpB;AACD;IACI,mBAAmB;IACnB,kBAAkB;IAClB,YAAY;IACZ,kBAAkB;IAClB,oBAAoB;IACpB,0BAA0B;IAC1B,oBAAoB;IACpB,uBAAuB;CAC1B;AACD;IACI,kBAAkB;IAClB,oBAAoB;IACpB,cAAc;CACjB;;AAED,cAAc;AACd;IACI,WAAW;IACX,kBAAkB;IAClB,4BAA4B;IAC5B,kBAAkB;IAClB,mBAAmB;IACnB,0BAA0B;IAC1B,oBAAoB;IACpB,kBAAkB;CACrB;AACD;IACI,sBAAsB;IACtB,eAAe;CAClB;AACD;IACI,uBAAuB;IACvB,YAAY;CACf;;AAED,cAAc;AACd;IACI,aAAa;IACb,aAAa;IACb,kBAAkB;IAClB,mBAAmB;IACnB,uBAAuB;IACvB,iBAAiB;IACjB,oBAAoB;IACpB,kBAAkB;IAClB,yBAAyB;IACzB,uBAAuB;CAC1B;AACD;IACI,aAAa;IACb,aAAa;IACb,oBAAoB;IACpB,kBAAkB;IAClB,eAAe;IACf,kBAAkB;IAClB,oBAAoB;IACpB,0BAA0B;IAC1B,aAAa;CAChB;AACD;IACI,0BAA0B;CAC7B;AACD,iBAAiB;AACjB;IACI,aAAa;IACb,iBAAiB;IACjB,iBAAiB;IACjB,eAAe;IACf,uBAAuB;IACvB,uBAAuB;IACvB,oBAAoB;IACpB,uBAAuB;IACvB,iBAAiB;CACpB;AACD;IACI,aAAa;IACb,mBAAmB;IACnB,oBAAoB;IACpB,oBAAoB;IACpB,uBAAuB;IACvB,0BAA0B;IAC1B,mBAAmB;IACnB,gBAAgB;IAChB,YAAY;CACf;AACD;IACI,oBAAoB;CACvB;AACD;IACI,aAAa;IACb,cAAc;IACd,eAAe;IACf,qBAAqB;IACrB,0BAA0B;CAC7B;AACD;IACI,aAAa;IACb,eAAe;CAClB","file":"game.css","sourcesContent":[".container {\n    background-color: #cccccc;\n}\n\n\n/*PingtuHeader 样式*/\n.pingtu-header {\n    width: 100%;\n    padding: 5rem 2rem 1rem;\n    text-align: center;\n    box-sizing: border-box;\n}\n.pingtu-header h1 {\n    margin: 0.5rem auto;\n    font-size: 2rem;\n    color: #9650ec;\n}\n.gift-box {\n    width: 80%;\n    margin: 0 auto;\n    background-color: #fff;\n    border: solid 2px #333;\n    border-radius: 10px;\n    font-weight: bold;\n    overflow: hidden;\n}\n.gift-box p {\n    margin-top: 0.1rem;\n    padding: 0.4rem 0;\n    color: #fff;\n    font-size: 1.1rem;\n    line-height: 1.1rem;\n    background-color: #ecd780;\n    border-radius: 10px;\n    box-sizing: border-box;\n}\n.gift-box span {\n    font-size: 1.5rem;\n    line-height: 1.5rem;\n    color: #ec6035\n}\n\n/*Gamerule样式*/\n.game-rule {\n    width: 45%;\n    margin: 3rem auto;\n    padding: 0.8rem 1rem 1.5rem;\n    font-size: 1.0rem;\n    text-align: center;\n    background-color: #ecc162;\n    border-radius: 20px;\n    font-weight: bold;\n}\n.game-rule h4 {\n    margin-bottom: 0.5rem;\n    color: #ec5c16;\n}\n.game-rule p {\n    padding-bottom: 0.3rem;\n    color: #333;\n}\n\n/*GameBtn 样式*/\n.game-btn {\n    width: 10rem;\n    height: 3rem;\n    margin: 2rem auto;\n    text-align: center;\n    background-color: #fff;\n    overflow: hidden;\n    border-radius: 50px;\n    line-height: 3rem;\n    border:solid 2px #333333;\n    box-sizing: border-box;\n}\n.game-btn .game-status {\n    width: 10rem;\n    height: 3rem;\n    margin-top: 0.05rem;\n    font-size: 1.5rem;\n    color: #d41d08;\n    font-weight: bold;\n    border-radius: 50px;\n    background-color: #bf7dec;\n    border: none;\n}\n.game-btn .game-status.is-disable {\n    background-color: #cccccc;\n}\n/*GameContain样式*/\n.game-contain {\n    width: 320px;\n    min-width: 320px;\n    max-width: 750px;\n    margin: 0 auto;\n    background-color: #fff;\n    border: solid 2px #333;\n    border-radius: 20px;\n    box-sizing: border-box;\n    overflow: hidden;\n}\n.game-contain-detail {\n    width: 320px;\n    margin-top: 0.1rem;\n    margin-left: 0.1rem;\n    border-radius: 15px;\n    box-sizing: border-box;\n    background-color: #ffae0c;\n    text-align: center;\n    font-size: 1rem;\n    color: #333;\n}\n.game-contain-detail p {\n    padding-top: 0.5rem;\n}\n.game-contain-detail img {\n    width: 280px;\n    height: 280px;\n    margin: 1rem 0;\n    margin-left: -0.4rem;\n    border: solid 2px #000000;\n}\n.game-contain-detail .game-img {\n    width: 280px;\n    margin: 0 auto;\n}\n\n\n\n\n\n\n"],"sourceRoot":"webpack://"}]);
 	
 	// exports
 
 
 /***/ },
-/* 181 */
+/* 180 */
 /***/ function(module, exports) {
 
 	/*
@@ -21900,7 +21970,7 @@
 
 
 /***/ },
-/* 182 */
+/* 181 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/*
@@ -22152,23 +22222,23 @@
 
 
 /***/ },
-/* 183 */
+/* 182 */
 /***/ function(module, exports, __webpack_require__) {
 
 	// style-loader: Adds some css to the DOM by adding a <style> tag
 	
 	// load the styles
-	var content = __webpack_require__(184);
+	var content = __webpack_require__(183);
 	if(typeof content === 'string') content = [[module.id, content, '']];
 	// add the styles to the DOM
-	var update = __webpack_require__(182)(content, {});
+	var update = __webpack_require__(181)(content, {});
 	if(content.locals) module.exports = content.locals;
 	// Hot Module Replacement
 	if(false) {
 		// When the styles change, update the <style> tags
 		if(!content.locals) {
-			module.hot.accept("!!./../node_modules/css-loader/index.js!./common.css", function() {
-				var newContent = require("!!./../node_modules/css-loader/index.js!./common.css");
+			module.hot.accept("!!./../node_modules/css-loader/index.js?sourceMap!./common.css", function() {
+				var newContent = require("!!./../node_modules/css-loader/index.js?sourceMap!./common.css");
 				if(typeof newContent === 'string') newContent = [[module.id, newContent, '']];
 				update(newContent);
 			});
@@ -22178,15 +22248,15 @@
 	}
 
 /***/ },
-/* 184 */
+/* 183 */
 /***/ function(module, exports, __webpack_require__) {
 
-	exports = module.exports = __webpack_require__(181)();
+	exports = module.exports = __webpack_require__(180)();
 	// imports
 	
 	
 	// module
-	exports.push([module.id, "/*css reset*/\r\n* {\r\n    padding: 0;\r\n    margin: 0;\r\n}\r\nhtml,body {\r\n    font-size:12px;\r\n    width:100%;\r\n    height:100%;\r\n}\r\na img, :link img, :visited img {\r\n    border:0;\r\n}\r\na {\r\n    text-decoration: none;\r\n    color:#000;\r\n}\r\nul,li {\r\n    list-style: none;\r\n}\r\n\r\n\r\n/*页面容器*/\r\n#app, .container {\r\n    width:100%;\r\n    height: 100%;\r\n}\r\nbody {\r\n    max-width: 750px;\r\n    min-width: 320px;\r\n    margin: 0 auto;\r\n    overflow: auto;\r\n}\r\n@media (min-width:750px){html{font-size:28px;}}\r\n@media (min-width:739px) and (max-width:747px){html{font-size:27.66px;}}\r\n@media (min-width:730px) and (max-width:738px){html{font-size:27.33px;}}\r\n@media (min-width:721px) and (max-width:729px){html{font-size:27px;}}\r\n@media (min-width:712px) and (max-width:720px){html{font-size:26.66px;}}\r\n@media (min-width:703px) and (max-width:711px){html{font-size:26.33px;}}\r\n@media (min-width:694px) and (max-width:702px){html{font-size:26px;}}\r\n@media (min-width:685px) and (max-width:693px){html{font-size:25.66px;}}\r\n@media (min-width:676px) and (max-width:684px){html{font-size:25.33px;}}\r\n@media (min-width:667px) and (max-width:675px){html{font-size:25px;}}\r\n@media (min-width:658px) and (max-width:666px){html{font-size:24.66px;}}\r\n@media (min-width:649px) and (max-width:657px){html{font-size:24.33px;}}\r\n@media (min-width:640px) and (max-width:648px){html{font-size:24px;}}\r\n@media (min-width:631px) and (max-width:639px){html{font-size:23.66px;}}\r\n@media (min-width:622px) and (max-width:630px){html{font-size:23.33px;}}\r\n@media (min-width:613px) and (max-width:621px){html{font-size:23px;}}\r\n@media (min-width:604px) and (max-width:612px){html{font-size:22.66px;}}\r\n@media (min-width:595px) and (max-width:603px){html{font-size:22.33px;}}\r\n@media (min-width:586px) and (max-width:594px){html{font-size:22px;}}\r\n@media (min-width:577px) and (max-width:585px){html{font-size:21.66px;}}\r\n@media (min-width:568px) and (max-width:576px){html{font-size:21.33px;}}\r\n@media (min-width:559px) and (max-width:567px){html{font-size:21px;}}\r\n@media (min-width:550px) and (max-width:558px){html{font-size:20.66px;}}\r\n@media (min-width:541px) and (max-width:549px){html{font-size:20.33px;}}\r\n@media (min-width:533px) and (max-width:540px){html{font-size:20px;}}\r\n@media (min-width:524px) and (max-width:532px){html{font-size:19.66px;}}\r\n@media (min-width:515px) and (max-width:523px){html{font-size:19.33px;}}\r\n@media (min-width:506px) and (max-width:514px){html{font-size:19px;}}\r\n@media (min-width:497px) and (max-width:505px){html{font-size:18.66px;}}\r\n@media (min-width:488px) and (max-width:496px){html{font-size:18.33px;}}\r\n@media (min-width:480px) and (max-width:487px){html{font-size:18px;}}\r\n@media (min-width:471px) and (max-width:479px){html{font-size:17.66px;}}\r\n@media (min-width:462px) and (max-width:470px){html{font-size:17.33px;}}\r\n@media (min-width:453px) and (max-width:461px){html{font-size:17px;}}\r\n@media (min-width:444px) and (max-width:452px){html{font-size:17.12px;}}\r\n@media (min-width:435px) and (max-width:443px){html{font-size:16.33px;}}\r\n@media (min-width:426px) and (max-width:434px){html{font-size:16px;}}\r\n@media (min-width:417px) and (max-width:425px){html{font-size:15.66px;}}\r\n@media (min-width:408px) and (max-width:416px){html{font-size:15.33px;}}\r\n@media (min-width:400px) and (max-width:407px){html{font-size:15px;}}\r\n@media (min-width:391px) and (max-width:399px){html{font-size:14.66px;}}\r\n@media (min-width:382px) and (max-width:390px){html{font-size:14.33px;}}\r\n@media (min-width:374px) and (max-width:381px){html{font-size:14px;}}\r\n@media (min-width:365px) and (max-width:373px){html{font-size:13.66px;}}\r\n@media (min-width:356px) and (max-width:364px){html{font-size:13.33px;}}\r\n@media (min-width:347px) and (max-width:355px){html{font-size:13px;}}\r\n@media (min-width:338px) and (max-width:346px){html{font-size:12.66px;}}\r\n@media (min-width:329px) and (max-width:337px){html{font-size:12.44px;}}\r\n@media (max-width:328px){html{font-size:12px;}}\r\n\r\n\r\n\r\n\r\n/*// 插件重置样式*/\r\n.puzzle {\r\n    position: relative;\r\n    width: 280px;\r\n    height: 280px;\r\n    border: solid 2px #333;\r\n}\r\n\r\n.puzzle-in {\r\n    position: relative;\r\n    margin: 1%;\r\n    height: 99%;\r\n    width: 99%\r\n}\r\n\r\n.puzz-item {\r\n    position: absolute;\r\n    width: 70px;\r\n    height: 70px;\r\n    text-align: center;\r\n}\r\n\r\n.puzz-item p {\r\n    color: #000;\r\n    font-size: 24px;\r\n    position: absolute;\r\n    top: 50%;\r\n    margin-top: -8px;\r\n    left: 50%;\r\n    margin-left: -8px;\r\n}\r\n\r\n.time {\r\n    position: absolute;\r\n    bottom: -30px;\r\n}\r\n\r\n.hide {\r\n    display: none;\r\n}\r\n\r\n\r\n", ""]);
+	exports.push([module.id, "/*css reset*/\n* {\n    padding: 0;\n    margin: 0;\n}\nhtml,body {\n    font-size:12px;\n    width:100%;\n    height:100%;\n}\na img, :link img, :visited img {\n    border:0;\n}\na {\n    text-decoration: none;\n    color:#000;\n}\nul,li {\n    list-style: none;\n}\n\n\n/*页面容器*/\n#app, .container {\n    width:100%;\n    height: 100%;\n}\nbody {\n    max-width: 750px;\n    min-width: 320px;\n    margin: 0 auto;\n    overflow: auto;\n}\n@media (min-width:750px){html{font-size:28px;}}\n@media (min-width:739px) and (max-width:747px){html{font-size:27.66px;}}\n@media (min-width:730px) and (max-width:738px){html{font-size:27.33px;}}\n@media (min-width:721px) and (max-width:729px){html{font-size:27px;}}\n@media (min-width:712px) and (max-width:720px){html{font-size:26.66px;}}\n@media (min-width:703px) and (max-width:711px){html{font-size:26.33px;}}\n@media (min-width:694px) and (max-width:702px){html{font-size:26px;}}\n@media (min-width:685px) and (max-width:693px){html{font-size:25.66px;}}\n@media (min-width:676px) and (max-width:684px){html{font-size:25.33px;}}\n@media (min-width:667px) and (max-width:675px){html{font-size:25px;}}\n@media (min-width:658px) and (max-width:666px){html{font-size:24.66px;}}\n@media (min-width:649px) and (max-width:657px){html{font-size:24.33px;}}\n@media (min-width:640px) and (max-width:648px){html{font-size:24px;}}\n@media (min-width:631px) and (max-width:639px){html{font-size:23.66px;}}\n@media (min-width:622px) and (max-width:630px){html{font-size:23.33px;}}\n@media (min-width:613px) and (max-width:621px){html{font-size:23px;}}\n@media (min-width:604px) and (max-width:612px){html{font-size:22.66px;}}\n@media (min-width:595px) and (max-width:603px){html{font-size:22.33px;}}\n@media (min-width:586px) and (max-width:594px){html{font-size:22px;}}\n@media (min-width:577px) and (max-width:585px){html{font-size:21.66px;}}\n@media (min-width:568px) and (max-width:576px){html{font-size:21.33px;}}\n@media (min-width:559px) and (max-width:567px){html{font-size:21px;}}\n@media (min-width:550px) and (max-width:558px){html{font-size:20.66px;}}\n@media (min-width:541px) and (max-width:549px){html{font-size:20.33px;}}\n@media (min-width:533px) and (max-width:540px){html{font-size:20px;}}\n@media (min-width:524px) and (max-width:532px){html{font-size:19.66px;}}\n@media (min-width:515px) and (max-width:523px){html{font-size:19.33px;}}\n@media (min-width:506px) and (max-width:514px){html{font-size:19px;}}\n@media (min-width:497px) and (max-width:505px){html{font-size:18.66px;}}\n@media (min-width:488px) and (max-width:496px){html{font-size:18.33px;}}\n@media (min-width:480px) and (max-width:487px){html{font-size:18px;}}\n@media (min-width:471px) and (max-width:479px){html{font-size:17.66px;}}\n@media (min-width:462px) and (max-width:470px){html{font-size:17.33px;}}\n@media (min-width:453px) and (max-width:461px){html{font-size:17px;}}\n@media (min-width:444px) and (max-width:452px){html{font-size:17.12px;}}\n@media (min-width:435px) and (max-width:443px){html{font-size:16.33px;}}\n@media (min-width:426px) and (max-width:434px){html{font-size:16px;}}\n@media (min-width:417px) and (max-width:425px){html{font-size:15.66px;}}\n@media (min-width:408px) and (max-width:416px){html{font-size:15.33px;}}\n@media (min-width:400px) and (max-width:407px){html{font-size:15px;}}\n@media (min-width:391px) and (max-width:399px){html{font-size:14.66px;}}\n@media (min-width:382px) and (max-width:390px){html{font-size:14.33px;}}\n@media (min-width:374px) and (max-width:381px){html{font-size:14px;}}\n@media (min-width:365px) and (max-width:373px){html{font-size:13.66px;}}\n@media (min-width:356px) and (max-width:364px){html{font-size:13.33px;}}\n@media (min-width:347px) and (max-width:355px){html{font-size:13px;}}\n@media (min-width:338px) and (max-width:346px){html{font-size:12.66px;}}\n@media (min-width:329px) and (max-width:337px){html{font-size:12.44px;}}\n@media (max-width:328px){html{font-size:12px;}}\n\n\n\n\n/*// 插件重置样式*/\n.puzzle {\n    position: relative;\n    width: 280px;\n    height: 280px;\n    border: solid 2px #333;\n}\n\n.puzzle-in {\n    position: relative;\n    margin: 1%;\n    height: 99%;\n    width: 99%\n}\n\n.puzz-item {\n    position: absolute;\n    width: 70px;\n    height: 70px;\n    text-align: center;\n}\n\n.puzz-item p {\n    color: #000;\n    font-size: 24px;\n    position: absolute;\n    top: 50%;\n    margin-top: -8px;\n    left: 50%;\n    margin-left: -8px;\n}\n\n.time {\n    position: absolute;\n    bottom: -30px;\n}\n\n.hide {\n    display: none;\n}\n\n\n", "", {"version":3,"sources":["/./css/common.css"],"names":[],"mappings":"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","file":"common.css","sourcesContent":["/*css reset*/\n* {\n    padding: 0;\n    margin: 0;\n}\nhtml,body {\n    font-size:12px;\n    width:100%;\n    height:100%;\n}\na img, :link img, :visited img {\n    border:0;\n}\na {\n    text-decoration: none;\n    color:#000;\n}\nul,li {\n    list-style: none;\n}\n\n\n/*页面容器*/\n#app, .container {\n    width:100%;\n    height: 100%;\n}\nbody {\n    max-width: 750px;\n    min-width: 320px;\n    margin: 0 auto;\n    overflow: auto;\n}\n@media (min-width:750px){html{font-size:28px;}}\n@media (min-width:739px) and (max-width:747px){html{font-size:27.66px;}}\n@media (min-width:730px) and (max-width:738px){html{font-size:27.33px;}}\n@media (min-width:721px) and (max-width:729px){html{font-size:27px;}}\n@media (min-width:712px) and (max-width:720px){html{font-size:26.66px;}}\n@media (min-width:703px) and (max-width:711px){html{font-size:26.33px;}}\n@media (min-width:694px) and (max-width:702px){html{font-size:26px;}}\n@media (min-width:685px) and (max-width:693px){html{font-size:25.66px;}}\n@media (min-width:676px) and (max-width:684px){html{font-size:25.33px;}}\n@media (min-width:667px) and (max-width:675px){html{font-size:25px;}}\n@media (min-width:658px) and (max-width:666px){html{font-size:24.66px;}}\n@media (min-width:649px) and (max-width:657px){html{font-size:24.33px;}}\n@media (min-width:640px) and (max-width:648px){html{font-size:24px;}}\n@media (min-width:631px) and (max-width:639px){html{font-size:23.66px;}}\n@media (min-width:622px) and (max-width:630px){html{font-size:23.33px;}}\n@media (min-width:613px) and (max-width:621px){html{font-size:23px;}}\n@media (min-width:604px) and (max-width:612px){html{font-size:22.66px;}}\n@media (min-width:595px) and (max-width:603px){html{font-size:22.33px;}}\n@media (min-width:586px) and (max-width:594px){html{font-size:22px;}}\n@media (min-width:577px) and (max-width:585px){html{font-size:21.66px;}}\n@media (min-width:568px) and (max-width:576px){html{font-size:21.33px;}}\n@media (min-width:559px) and (max-width:567px){html{font-size:21px;}}\n@media (min-width:550px) and (max-width:558px){html{font-size:20.66px;}}\n@media (min-width:541px) and (max-width:549px){html{font-size:20.33px;}}\n@media (min-width:533px) and (max-width:540px){html{font-size:20px;}}\n@media (min-width:524px) and (max-width:532px){html{font-size:19.66px;}}\n@media (min-width:515px) and (max-width:523px){html{font-size:19.33px;}}\n@media (min-width:506px) and (max-width:514px){html{font-size:19px;}}\n@media (min-width:497px) and (max-width:505px){html{font-size:18.66px;}}\n@media (min-width:488px) and (max-width:496px){html{font-size:18.33px;}}\n@media (min-width:480px) and (max-width:487px){html{font-size:18px;}}\n@media (min-width:471px) and (max-width:479px){html{font-size:17.66px;}}\n@media (min-width:462px) and (max-width:470px){html{font-size:17.33px;}}\n@media (min-width:453px) and (max-width:461px){html{font-size:17px;}}\n@media (min-width:444px) and (max-width:452px){html{font-size:17.12px;}}\n@media (min-width:435px) and (max-width:443px){html{font-size:16.33px;}}\n@media (min-width:426px) and (max-width:434px){html{font-size:16px;}}\n@media (min-width:417px) and (max-width:425px){html{font-size:15.66px;}}\n@media (min-width:408px) and (max-width:416px){html{font-size:15.33px;}}\n@media (min-width:400px) and (max-width:407px){html{font-size:15px;}}\n@media (min-width:391px) and (max-width:399px){html{font-size:14.66px;}}\n@media (min-width:382px) and (max-width:390px){html{font-size:14.33px;}}\n@media (min-width:374px) and (max-width:381px){html{font-size:14px;}}\n@media (min-width:365px) and (max-width:373px){html{font-size:13.66px;}}\n@media (min-width:356px) and (max-width:364px){html{font-size:13.33px;}}\n@media (min-width:347px) and (max-width:355px){html{font-size:13px;}}\n@media (min-width:338px) and (max-width:346px){html{font-size:12.66px;}}\n@media (min-width:329px) and (max-width:337px){html{font-size:12.44px;}}\n@media (max-width:328px){html{font-size:12px;}}\n\n\n\n\n/*// 插件重置样式*/\n.puzzle {\n    position: relative;\n    width: 280px;\n    height: 280px;\n    border: solid 2px #333;\n}\n\n.puzzle-in {\n    position: relative;\n    margin: 1%;\n    height: 99%;\n    width: 99%\n}\n\n.puzz-item {\n    position: absolute;\n    width: 70px;\n    height: 70px;\n    text-align: center;\n}\n\n.puzz-item p {\n    color: #000;\n    font-size: 24px;\n    position: absolute;\n    top: 50%;\n    margin-top: -8px;\n    left: 50%;\n    margin-left: -8px;\n}\n\n.time {\n    position: absolute;\n    bottom: -30px;\n}\n\n.hide {\n    display: none;\n}\n\n\n"],"sourceRoot":"webpack://"}]);
 	
 	// exports
 

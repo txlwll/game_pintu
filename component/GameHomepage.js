@@ -1,5 +1,5 @@
 
-import PingtuHeader from './PintuHeader'
+import PintuHeader from './PintuHeader'
 import GameRule from './GameRule'
 import GameBtn from './GameBtn'
 import GameContain from './GameContain'
@@ -7,6 +7,7 @@ import GameContain from './GameContain'
 require('../css/game.css')
 
 var game = null;
+var playInterval = null;
 
 
 class GameHomepage extends React.Component {
@@ -20,46 +21,63 @@ class GameHomepage extends React.Component {
             gameTimeout: 60,       //游戏结束时间倒计时
         };
     }
+    //组件挂载后初始化game
+    // componentDidMount() {
+    //     game = new Puzzle('puzzle', 280, 280, 'images/chocolate_280.png', 3, true);
+        // console.log($('#puzzle'))
+    // }
+
     // 跳转到游戏
     goToPlay = () => {
+        this.autoPlay()
         this.setState({
             isUserStarted: true,
         })
-    }
-
-    //组件挂载后初始化game
-    componentDidMount() {
         game = new Puzzle('puzzle', 280, 280, 'images/chocolate_280.png', 3, true);
     }
 
-        //开始倒计时10秒
-    startPlay = () => {
-        if (this.state.isStarted === true) {
-            return false
-        }
-        this.setState({
-            isStarted: true
-        });
+        //游戏自动倒计时10秒
+    autoPlay = () => {
         this.startPlayInterval();
         return false;
     }
 
+    // 点按钮直接进入游戏界面
+    startPlay = () => {
+        if(this.state.isStarted === true){
+            return false
+        }
+        clearInterval(playInterval);
+        this.setState({
+            isStarted: true,
+            gameStarted: true,
+            playTimeout: 0,
+        });
+        this.startGameInterval();
+        game.start();
+    }
+
+
+    //游戏倒计时10秒动作
     startPlayInterval = () =>{
-    const playInterval = setInterval(() => {
+        playInterval = setInterval(() => {
         this.setState({
             playTimeout: this.state.playTimeout - 1
         })
         if (this.state.playTimeout <= 0){
             clearInterval(playInterval)
             this.setState({
-                gameStarted: true
+                gameStarted: true,
+                isStarted: true,
             });
-            this.gameStart()
+            this.startGameInterval();
+            game.start();
         }
-    },1000)}
+    },1000)
+    }
 
     // 游戏结束倒计时60秒
-    gameStart = () =>{
+    startGameInterval = () =>{
         const gameInterval = setInterval(() =>{
             this.setState({
                 gameTimeout: this.state.gameTimeout - 1
@@ -73,6 +91,7 @@ class GameHomepage extends React.Component {
                     gameTimeout: 60,
                 });
                 game.shuffle();
+                this.autotPlay();
             }
             else {
                 if(game.isOkay()){
@@ -88,7 +107,7 @@ class GameHomepage extends React.Component {
     render (){
         return (
             <div className="container" style={{background: this.state.isUserStarted ? '#DE5E5E' : '#ccc'}}>
-                <PingtuHeader />
+                <PintuHeader />
                 <div className="game-content">
                     { this.state.isUserStarted ?
                         <GameContain isStarted = 'false'

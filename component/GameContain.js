@@ -7,8 +7,11 @@ class GameContain extends React.Component {
                     <img src={require('../images/chocolate.png')} alt="#"/>
                 </div>
                 <div className="game-contain-detail" style={{display: this.props.gameStarted ? 'block' : 'none'}}>
-                    <div class="puzzle" id="puzzle" >
-                        <div className="time" style={{display: 'none'}}><span>0</span> <span>00:00.000</span></div>
+                    <p>还剩 <span>{this.props.gameTimeout}</span> 秒完成拼图 </p>
+                    <div className="game-img">
+                        <div className="puzzle" id="puzzle" >
+                            <div className="time" style={{display: 'none'}}><span>0</span> <span>00:00.000</span></div>
+                        </div>
                     </div>
                 </div>
             </div>
