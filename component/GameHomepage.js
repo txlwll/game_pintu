@@ -120,7 +120,7 @@ class GameHomepage extends React.Component {
     render() {
         return (
             <div className="container">
-                <PintuHeader />
+                <PintuHeader gameHeader={this.state.isUserStarted}/>
                 <div className="game-content">
                     <div style={{display: this.state.isUserStarted ? 'block' : 'none'}}>
                         <GameContain isStarted='false'
@@ -133,7 +133,7 @@ class GameHomepage extends React.Component {
                         <GameRule />
                     </div>
                 </div>
-                <GameBtn btnText={this.state.isUserStarted ? '看完，开始！' : '立即开始'}
+                <GameBtn btnImg={this.state.isUserStarted}
                          onUserClick={this.state.isUserStarted ? this.startPlay : this.goToPlay}
                          isDisable={this.state.isStarted}
                 />

@@ -1,13 +1,13 @@
-
-
 class GameRule extends React.Component {
-    render (){
+    render() {
         return (
             <div className="game-rule">
-                <h4>活动规则</h4>
-                <p>
-                    在规定的时间内完成拼图将有机会获得10元，50元，100元等现金劵
-                </p>
+                <div className="game-rule-detail">
+                    <img src={require('../images/game-rule-title.png')} alt=""/>
+                    <p>
+                        在规定的时间内完成拼图将有机会获得10元，50元，100元等现金劵
+                    </p>
+                </div>
             </div>
         )
     }

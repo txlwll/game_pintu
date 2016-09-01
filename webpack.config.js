@@ -17,7 +17,7 @@ module.exports = {
             },
             {
                 test: /\.css$/,
-                loader: 'style-loader!css-loader?sourceMap'
+                loader: 'style-loader!css-loader'
             },
             {
                 test: /\.(png|jpg)$/,
@@ -31,7 +31,7 @@ module.exports = {
             React: "react",
             ReactDOM: "react-dom",
         }),
-    ]                      //依赖注入，全局注册这两个库是为了不用在写react组件时每次都引用它们，当代码里面用到时，它会自动到加载对应的包
+    ]                      
 };
 
 
