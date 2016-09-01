@@ -187,6 +187,7 @@
 /***/ function(module, exports) {
 
 	// shim for using process in browser
+	
 	var process = module.exports = {};
 	
 	// cached from whatever global is present so that test runners that stub it
@@ -197,84 +198,22 @@
 	var cachedSetTimeout;
 	var cachedClearTimeout;
 	
-	function defaultSetTimout() {
-	    throw new Error('setTimeout has not been defined');
-	}
-	function defaultClearTimeout () {
-	    throw new Error('clearTimeout has not been defined');
-	}
 	(function () {
-	    try {
-	        if (typeof setTimeout === 'function') {
-	            cachedSetTimeout = setTimeout;
-	        } else {
-	            cachedSetTimeout = defaultSetTimout;
-	        }
-	    } catch (e) {
-	        cachedSetTimeout = defaultSetTimout;
+	  try {
+	    cachedSetTimeout = setTimeout;
+	  } catch (e) {
+	    cachedSetTimeout = function () {
+	      throw new Error('setTimeout is not defined');
 	    }
-	    try {
-	        if (typeof clearTimeout === 'function') {
-	            cachedClearTimeout = clearTimeout;
-	        } else {
-	            cachedClearTimeout = defaultClearTimeout;
-	        }
-	    } catch (e) {
-	        cachedClearTimeout = defaultClearTimeout;
+	  }
+	  try {
+	    cachedClearTimeout = clearTimeout;
+	  } catch (e) {
+	    cachedClearTimeout = function () {
+	      throw new Error('clearTimeout is not defined');
 	    }
+	  }
 	} ())
-	function runTimeout(fun) {
-	    if (cachedSetTimeout === setTimeout) {
-	        //normal enviroments in sane situations
-	        return setTimeout(fun, 0);
-	    }
-	    // if setTimeout wasn't available but was latter defined
-	    if ((cachedSetTimeout === defaultSetTimout || !cachedSetTimeout) && setTimeout) {
-	        cachedSetTimeout = setTimeout;
-	        return setTimeout(fun, 0);
-	    }
-	    try {
-	        // when when somebody has screwed with setTimeout but no I.E. maddness
-	        return cachedSetTimeout(fun, 0);
-	    } catch(e){
-	        try {
-	            // When we are in I.E. but the script has been evaled so I.E. doesn't trust the global object when called normally
-	            return cachedSetTimeout.call(null, fun, 0);
-	        } catch(e){
-	            // same as above but when it's a version of I.E. that must have the global object for 'this', hopfully our context correct otherwise it will throw a global error
-	            return cachedSetTimeout.call(this, fun, 0);
-	        }
-	    }
-	
-	
-	}
-	function runClearTimeout(marker) {
-	    if (cachedClearTimeout === clearTimeout) {
-	        //normal enviroments in sane situations
-	        return clearTimeout(marker);
-	    }
-	    // if clearTimeout wasn't available but was latter defined
-	    if ((cachedClearTimeout === defaultClearTimeout || !cachedClearTimeout) && clearTimeout) {
-	        cachedClearTimeout = clearTimeout;
-	        return clearTimeout(marker);
-	    }
-	    try {
-	        // when when somebody has screwed with setTimeout but no I.E. maddness
-	        return cachedClearTimeout(marker);
-	    } catch (e){
-	        try {
-	            // When we are in I.E. but the script has been evaled so I.E. doesn't  trust the global object when called normally
-	            return cachedClearTimeout.call(null, marker);
-	        } catch (e){
-	            // same as above but when it's a version of I.E. that must have the global object for 'this', hopfully our context correct otherwise it will throw a global error.
-	            // Some versions of I.E. have different rules for clearTimeout vs setTimeout
-	            return cachedClearTimeout.call(this, marker);
-	        }
-	    }
-	
-	
-	
-	}
 	var queue = [];
 	var draining = false;
 	var currentQueue;
@@ -299,7 +238,7 @@
 	    if (draining) {
 	        return;
 	    }
-	    var timeout = runTimeout(cleanUpNextTick);
+	    var timeout = cachedSetTimeout(cleanUpNextTick);
 	    draining = true;
 	
 	    var len = queue.length;
@@ -316,7 +255,7 @@
 	    }
 	    currentQueue = null;
 	    draining = false;
-	    runClearTimeout(timeout);
+	    cachedClearTimeout(timeout);
 	}
 	
 	process.nextTick = function (fun) {
@@ -328,7 +267,7 @@
 	    }
 	    queue.push(new Item(fun, args));
 	    if (queue.length === 1 && !draining) {
-	        runTimeout(drainQueue);
+	        cachedSetTimeout(drainQueue, 0);
 	    }
 	};
 	
@@ -22003,8 +21942,8 @@
 	if(false) {
 		// When the styles change, update the <style> tags
 		if(!content.locals) {
-			module.hot.accept("!!./../node_modules/css-loader/index.js!./game.css", function() {
-				var newContent = require("!!./../node_modules/css-loader/index.js!./game.css");
+			module.hot.accept("!!./../../node_modules/css-loader/index.js!./game.css", function() {
+				var newContent = require("!!./../../node_modules/css-loader/index.js!./game.css");
 				if(typeof newContent === 'string') newContent = [[module.id, newContent, '']];
 				update(newContent);
 			});
@@ -22022,7 +21961,7 @@
 	
 	
 	// module
-	exports.push([module.id, ".container {\n    background: url(" + __webpack_require__(185) + ") no-repeat;\n    -webkit-background-size:100% 100%;\n    background-size: 100% 100%;\n}\n.game-content {\n    margin-bottom: 1rem;\n}\n\n/*PingtuHeader 样式*/\n.header {\n    width: 100%;\n    padding: 8rem 2rem 0;\n    text-align: center;\n    box-sizing: border-box;\n}\n.header.game-header {\n    width: 100%;\n    padding: 4rem 2rem 1rem;\n}\n.header img {\n    width: 100%;\n}\n.gift-box {\n    width: 80%;\n    margin: 0 auto;\n    background-color: #fff;\n    border: solid 2px #333;\n    border-radius: 10px;\n    font-weight: bold;\n    overflow: hidden;\n}\n.gift-box p {\n    margin-top: 0.1rem;\n    padding: 0.4rem 0;\n    color: #fff;\n    font-size: 1.1rem;\n    line-height: 1.1rem;\n    background-color: #ecd780;\n    border-radius: 10px;\n    box-sizing: border-box;\n}\n.gift-box span {\n    font-size: 1.5rem;\n    line-height: 1.5rem;\n    color: #ec6035\n}\n\n/*Gamerule样式*/\n.game-rule {\n    width: 12rem;\n    height:12rem;\n    margin: 1rem auto 7rem;\n    font-size: 1.0rem;\n    text-align: center;\n    border-radius: 50%;\n    font-weight: bold;\n    overflow: hidden;\n    border: solid 3px #ff7e00;\n    box-shadow: 2px 3px 0px #fff inset;\n}\n.game-rule-detail {\n    width: 12rem;\n    height:12rem;\n    margin-top: 0.3rem;\n    padding: 2.2rem 0.5rem;\n    border-radius: 50%;\n    background-color: rgba(255,190,0,0.2);\n    box-sizing: border-box;\n}\n.game-rule img {\n    width: 50%;\n    margin-bottom: 0.4rem;\n}\n.game-rule p {\n    padding-bottom: 0.3rem;\n    color: #333;\n}\n\n/*GameBtn 样式*/\n.game-btn img{\n    width: 60%;\n    margin: 0 20%;\n}\n/*GameContain样式*/\n\n.game-contain {\n    width: 320px;\n    min-width: 320px;\n    max-width: 750px;\n    margin: 0 auto;\n    background-color: #fff;\n    border: solid 3px #33003a;\n    border-radius: 13px;\n    box-sizing: border-box;\n    overflow: hidden;\n}\n.game-contain-detail {\n    width: 320px;\n    padding: 0.1rem 1rem 1rem;\n    margin-top: 0.15rem;\n    margin-left: 0.1rem;\n    border-radius: 8px;\n    box-sizing: border-box;\n    background-image:-webkit-linear-gradient(to top, #9976ff,#76adff);\n    background-image:linear-gradient(to top,#9976ff,#76adff);\n    text-align: center;\n    font-size: 1rem;\n    color: #333;\n}\n.game-contain-detail p {\n    padding: 1rem 0;\n    font-size: 1rem;\n    font-weight: bold;\n}\n.game-contain-detail img {\n    width: 100%;\n    height: 100%;\n    /*margin: 1rem 0;*/\n    border: solid 2px #33003a;\n}\n.game-contain-detail .game-img {\n    width: 280px;\n    margin: 0 auto;\n    margin-left: -0.2rem;\n}\n\n\n/*Dialog 样式*/\n.dialog-mask {\n    position: fixed;\n    z-index: 1;\n    width: 100%;\n    height: 100%;\n    top: 0;\n    left: 0;\n    background-color: rgba(0,0,0,0.4);\n}\n.dialog-detail {\n    position: absolute;\n    width: 75%;\n    min-width: 200px;\n    max-width: 750px;\n    top: 48%;\n    height: 13rem;\n    left: 50%;\n    transform: translate(-50%,-50%);\n    background: url(" + __webpack_require__(186) + ") no-repeat;\n    background-size: 100%;\n    text-align: center;\n    z-index: 13;\n    border-radius: 12px;\n    border: solid 3px #33003a;\n}\n\n.dialog-hd {\n    position: relative;\n    padding: 1.25rem 0 0;\n}\n\n.dialog-hd p{\n    padding: 3rem 0 1rem;\n    font-size: 1.5rem;\n    font-weight: bold;\n}\n.dialog-hd .dialog-close {\n    position: absolute;\n    top: -0.75rem;\n    right: -0.75rem;\n    width: 1.5rem;\n    height: 1.5rem;\n    border-radius: 50%;\n    background-color: #ffffff;\n    border: solid 2px #333;\n}\n.dialog-hd .dialog-close-btn {\n    position: absolute;\n    top: 0;\n    right: 0;\n    width: 1.5rem;\n    height: 1.5rem;\n    border-radius: 50%;\n    background: url(" + __webpack_require__(187) + ") no-repeat;\n    background-size: 100%;\n}\n\n.dialog-bd {\n    padding: 0 1.666667rem;\n    font-size: 1.25rem;\n    word-wrap: break-word;\n    word-break: break-all;\n}\n\n\n\n\n\n\n\n", ""]);
+	exports.push([module.id, ".container {\n    background: url(" + __webpack_require__(185) + ") no-repeat;\n    -webkit-background-size:100% 100%;\n    background-size: 100% 100%;\n}\n.game-content {\n    margin-bottom: 1rem;\n}\n\n/*PingtuHeader 样式*/\n.header {\n    width: 100%;\n    padding: 8rem 2rem 0;\n    text-align: center;\n    box-sizing: border-box;\n}\n.header.game-header {\n    width: 100%;\n    padding: 4rem 2rem 1rem;\n}\n.header img {\n    width: 100%;\n}\n.gift-box {\n    width: 80%;\n    margin: 0 auto;\n    background-color: #fff;\n    border: solid 2px #333;\n    border-radius: 10px;\n    font-weight: bold;\n    overflow: hidden;\n}\n.gift-box p {\n    margin-top: 0.1rem;\n    padding: 0.4rem 0;\n    color: #fff;\n    font-size: 1.1rem;\n    line-height: 1.1rem;\n    background-color: #ecd780;\n    border-radius: 10px;\n    box-sizing: border-box;\n}\n.gift-box span {\n    font-size: 1.5rem;\n    line-height: 1.5rem;\n    color: #ec6035\n}\n\n/*Gamerule样式*/\n.game-rule {\n    width: 12rem;\n    height:12rem;\n    margin: 1rem auto 7rem;\n    font-size: 1.0rem;\n    text-align: center;\n    border-radius: 50%;\n    font-weight: bold;\n    overflow: hidden;\n    border: solid 3px #ff7e00;\n    box-shadow: 2px 3px 0px #fff inset;\n}\n.game-rule-detail {\n    width: 12rem;\n    height:12rem;\n    margin-top: 0.3rem;\n    padding: 2.2rem 0.5rem;\n    border-radius: 50%;\n    background-color: rgba(255,190,0,0.2);\n    box-sizing: border-box;\n}\n.game-rule img {\n    width: 50%;\n    margin-bottom: 0.4rem;\n}\n.game-rule p {\n    padding-bottom: 0.3rem;\n    color: #333;\n}\n\n/*GameBtn 样式*/\n.game-btn img{\n    width: 60%;\n    margin: 0 20%;\n}\n/*GameContain样式*/\n\n.game-contain {\n    width: 320px;\n    min-width: 320px;\n    max-width: 750px;\n    margin: 0 auto;\n    background-color: #fff;\n    border: solid 3px #33003a;\n    border-radius: 13px;\n    box-sizing: border-box;\n    overflow: hidden;\n}\n.game-contain-detail {\n    width: 320px;\n    padding: 0.1rem 1rem 1rem;\n    margin-top: 0.15rem;\n    margin-left: 0.1rem;\n    border-radius: 8px;\n    box-sizing: border-box;\n    background-image:-webkit-linear-gradient(to top, #9976ff,#76adff);\n    background-image:linear-gradient(to top,#9976ff,#76adff);\n    text-align: center;\n    font-size: 1rem;\n    color: #333;\n}\n.game-contain-detail p {\n    padding: 1rem 0;\n    font-size: 1rem;\n    font-weight: bold;\n}\n.game-contain-detail img {\n    width: 100%;\n    height: 100%;\n}\n.game-contain-detail .game-img {\n    width: 272px;\n    height: 272px;\n    margin: 0 auto;\n    margin-left: 0.2rem;\n    overflow: hidden;\n    border: 2px solid #333;\n}\n\n\n/*Dialog 样式*/\n.dialog-mask {\n    position: fixed;\n    z-index: 1;\n    width: 100%;\n    height: 100%;\n    top: 0;\n    left: 0;\n    background-color: rgba(0,0,0,0.4);\n}\n.dialog-detail {\n    position: absolute;\n    width: 75%;\n    min-width: 200px;\n    max-width: 750px;\n    top: 48%;\n    height: 13rem;\n    left: 50%;\n    transform: translate(-50%,-50%);\n    background: url(" + __webpack_require__(186) + ") no-repeat;\n    background-size: 100%;\n    text-align: center;\n    z-index: 13;\n    border-radius: 12px;\n    border: solid 3px #33003a;\n}\n\n.dialog-hd {\n    position: relative;\n    padding: 1.25rem 0 0;\n}\n\n.dialog-hd p{\n    padding: 3rem 0 1rem;\n    font-size: 1.5rem;\n    font-weight: bold;\n}\n.dialog-hd .dialog-close {\n    position: absolute;\n    top: -0.75rem;\n    right: -0.75rem;\n    width: 1.5rem;\n    height: 1.5rem;\n    border-radius: 50%;\n    background-color: #ffffff;\n    border: solid 2px #333;\n}\n.dialog-hd .dialog-close-btn {\n    position: absolute;\n    top: 0;\n    right: 0;\n    width: 1.5rem;\n    height: 1.5rem;\n    border-radius: 50%;\n    background: url(" + __webpack_require__(187) + ") no-repeat;\n    background-size: 100%;\n}\n\n.dialog-bd {\n    padding: 0 1.666667rem;\n    font-size: 1.25rem;\n    word-wrap: break-word;\n    word-break: break-all;\n}\n", ""]);
 	
 	// exports
 
@@ -22387,8 +22326,8 @@
 	if(false) {
 		// When the styles change, update the <style> tags
 		if(!content.locals) {
-			module.hot.accept("!!./../node_modules/css-loader/index.js!./common.css", function() {
-				var newContent = require("!!./../node_modules/css-loader/index.js!./common.css");
+			module.hot.accept("!!./../../node_modules/css-loader/index.js!./common.css", function() {
+				var newContent = require("!!./../../node_modules/css-loader/index.js!./common.css");
 				if(typeof newContent === 'string') newContent = [[module.id, newContent, '']];
 				update(newContent);
 			});
@@ -22406,7 +22345,7 @@
 	
 	
 	// module
-	exports.push([module.id, "/*css reset*/\n* {\n    padding: 0;\n    margin: 0;\n}\nhtml,body {\n    font-size:12px;\n    width:100%;\n    height:100%;\n}\na img, :link img, :visited img {\n    border:0;\n}\na {\n    text-decoration: none;\n    color:#000;\n}\nul,li {\n    list-style: none;\n}\n\n\n/*页面容器*/\n#app, .container {\n    width:100%;\n    height: 100%;\n}\nbody {\n    max-width: 750px;\n    min-width: 320px;\n    margin: 0 auto;\n    overflow: auto;\n}\n@media (min-width:750px){html{font-size:28px;}}\n@media (min-width:739px) and (max-width:747px){html{font-size:27.66px;}}\n@media (min-width:730px) and (max-width:738px){html{font-size:27.33px;}}\n@media (min-width:721px) and (max-width:729px){html{font-size:27px;}}\n@media (min-width:712px) and (max-width:720px){html{font-size:26.66px;}}\n@media (min-width:703px) and (max-width:711px){html{font-size:26.33px;}}\n@media (min-width:694px) and (max-width:702px){html{font-size:26px;}}\n@media (min-width:685px) and (max-width:693px){html{font-size:25.66px;}}\n@media (min-width:676px) and (max-width:684px){html{font-size:25.33px;}}\n@media (min-width:667px) and (max-width:675px){html{font-size:25px;}}\n@media (min-width:658px) and (max-width:666px){html{font-size:24.66px;}}\n@media (min-width:649px) and (max-width:657px){html{font-size:24.33px;}}\n@media (min-width:640px) and (max-width:648px){html{font-size:24px;}}\n@media (min-width:631px) and (max-width:639px){html{font-size:23.66px;}}\n@media (min-width:622px) and (max-width:630px){html{font-size:23.33px;}}\n@media (min-width:613px) and (max-width:621px){html{font-size:23px;}}\n@media (min-width:604px) and (max-width:612px){html{font-size:22.66px;}}\n@media (min-width:595px) and (max-width:603px){html{font-size:22.33px;}}\n@media (min-width:586px) and (max-width:594px){html{font-size:22px;}}\n@media (min-width:577px) and (max-width:585px){html{font-size:21.66px;}}\n@media (min-width:568px) and (max-width:576px){html{font-size:21.33px;}}\n@media (min-width:559px) and (max-width:567px){html{font-size:21px;}}\n@media (min-width:550px) and (max-width:558px){html{font-size:20.66px;}}\n@media (min-width:541px) and (max-width:549px){html{font-size:20.33px;}}\n@media (min-width:533px) and (max-width:540px){html{font-size:20px;}}\n@media (min-width:524px) and (max-width:532px){html{font-size:19.66px;}}\n@media (min-width:515px) and (max-width:523px){html{font-size:19.33px;}}\n@media (min-width:506px) and (max-width:514px){html{font-size:19px;}}\n@media (min-width:497px) and (max-width:505px){html{font-size:18.66px;}}\n@media (min-width:488px) and (max-width:496px){html{font-size:18.33px;}}\n@media (min-width:480px) and (max-width:487px){html{font-size:18px;}}\n@media (min-width:471px) and (max-width:479px){html{font-size:17.66px;}}\n@media (min-width:462px) and (max-width:470px){html{font-size:17.33px;}}\n@media (min-width:453px) and (max-width:461px){html{font-size:17px;}}\n@media (min-width:444px) and (max-width:452px){html{font-size:17.12px;}}\n@media (min-width:435px) and (max-width:443px){html{font-size:16.33px;}}\n@media (min-width:426px) and (max-width:434px){html{font-size:16px;}}\n@media (min-width:417px) and (max-width:425px){html{font-size:15.66px;}}\n@media (min-width:408px) and (max-width:416px){html{font-size:15.33px;}}\n@media (min-width:400px) and (max-width:407px){html{font-size:15px;}}\n@media (min-width:391px) and (max-width:399px){html{font-size:14.66px;}}\n@media (min-width:382px) and (max-width:390px){html{font-size:14.33px;}}\n@media (min-width:374px) and (max-width:381px){html{font-size:14px;}}\n@media (min-width:365px) and (max-width:373px){html{font-size:13.66px;}}\n@media (min-width:356px) and (max-width:364px){html{font-size:13.33px;}}\n@media (min-width:347px) and (max-width:355px){html{font-size:13px;}}\n@media (min-width:338px) and (max-width:346px){html{font-size:12.66px;}}\n@media (min-width:329px) and (max-width:337px){html{font-size:12.44px;}}\n@media (max-width:328px){html{font-size:12px;}}\n\n\n\n\n/*// 插件重置样式*/\n.puzzle {\n    position: relative;\n    width: 280px;\n    height: 280px;\n    border: solid 2px #333;\n}\n\n.puzzle-in {\n    position: relative;\n    margin: 1%;\n    height: 99%;\n    width: 99%\n}\n\n.puzz-item {\n    position: absolute;\n    width: 70px;\n    height: 70px;\n    text-align: center;\n}\n\n.puzz-item p {\n    color: #000;\n    font-size: 24px;\n    position: absolute;\n    top: 50%;\n    margin-top: -8px;\n    left: 50%;\n    margin-left: -8px;\n}\n\n.time {\n    position: absolute;\n    bottom: -30px;\n}\n\n.hide {\n    display: none;\n}\n\n\n", ""]);
+	exports.push([module.id, "/*css reset*/\n* {\n    padding: 0;\n    margin: 0;\n}\nhtml,body {\n    font-size:12px;\n    width:100%;\n    height:100%;\n}\na img, :link img, :visited img {\n    border:0;\n}\na {\n    text-decoration: none;\n    color:#000;\n}\nul,li {\n    list-style: none;\n}\n\n\n/*页面容器*/\n#app, .container {\n    width:100%;\n    height: 100%;\n}\nbody {\n    max-width: 750px;\n    min-width: 320px;\n    margin: 0 auto;\n    overflow: auto;\n}\n@media (min-width:750px){html{font-size:28px;}}\n@media (min-width:739px) and (max-width:747px){html{font-size:27.66px;}}\n@media (min-width:730px) and (max-width:738px){html{font-size:27.33px;}}\n@media (min-width:721px) and (max-width:729px){html{font-size:27px;}}\n@media (min-width:712px) and (max-width:720px){html{font-size:26.66px;}}\n@media (min-width:703px) and (max-width:711px){html{font-size:26.33px;}}\n@media (min-width:694px) and (max-width:702px){html{font-size:26px;}}\n@media (min-width:685px) and (max-width:693px){html{font-size:25.66px;}}\n@media (min-width:676px) and (max-width:684px){html{font-size:25.33px;}}\n@media (min-width:667px) and (max-width:675px){html{font-size:25px;}}\n@media (min-width:658px) and (max-width:666px){html{font-size:24.66px;}}\n@media (min-width:649px) and (max-width:657px){html{font-size:24.33px;}}\n@media (min-width:640px) and (max-width:648px){html{font-size:24px;}}\n@media (min-width:631px) and (max-width:639px){html{font-size:23.66px;}}\n@media (min-width:622px) and (max-width:630px){html{font-size:23.33px;}}\n@media (min-width:613px) and (max-width:621px){html{font-size:23px;}}\n@media (min-width:604px) and (max-width:612px){html{font-size:22.66px;}}\n@media (min-width:595px) and (max-width:603px){html{font-size:22.33px;}}\n@media (min-width:586px) and (max-width:594px){html{font-size:22px;}}\n@media (min-width:577px) and (max-width:585px){html{font-size:21.66px;}}\n@media (min-width:568px) and (max-width:576px){html{font-size:21.33px;}}\n@media (min-width:559px) and (max-width:567px){html{font-size:21px;}}\n@media (min-width:550px) and (max-width:558px){html{font-size:20.66px;}}\n@media (min-width:541px) and (max-width:549px){html{font-size:20.33px;}}\n@media (min-width:533px) and (max-width:540px){html{font-size:20px;}}\n@media (min-width:524px) and (max-width:532px){html{font-size:19.66px;}}\n@media (min-width:515px) and (max-width:523px){html{font-size:19.33px;}}\n@media (min-width:506px) and (max-width:514px){html{font-size:19px;}}\n@media (min-width:497px) and (max-width:505px){html{font-size:18.66px;}}\n@media (min-width:488px) and (max-width:496px){html{font-size:18.33px;}}\n@media (min-width:480px) and (max-width:487px){html{font-size:18px;}}\n@media (min-width:471px) and (max-width:479px){html{font-size:17.66px;}}\n@media (min-width:462px) and (max-width:470px){html{font-size:17.33px;}}\n@media (min-width:453px) and (max-width:461px){html{font-size:17px;}}\n@media (min-width:444px) and (max-width:452px){html{font-size:17.12px;}}\n@media (min-width:435px) and (max-width:443px){html{font-size:16.33px;}}\n@media (min-width:426px) and (max-width:434px){html{font-size:16px;}}\n@media (min-width:417px) and (max-width:425px){html{font-size:15.66px;}}\n@media (min-width:408px) and (max-width:416px){html{font-size:15.33px;}}\n@media (min-width:400px) and (max-width:407px){html{font-size:15px;}}\n@media (min-width:391px) and (max-width:399px){html{font-size:14.66px;}}\n@media (min-width:382px) and (max-width:390px){html{font-size:14.33px;}}\n@media (min-width:374px) and (max-width:381px){html{font-size:14px;}}\n@media (min-width:365px) and (max-width:373px){html{font-size:13.66px;}}\n@media (min-width:356px) and (max-width:364px){html{font-size:13.33px;}}\n@media (min-width:347px) and (max-width:355px){html{font-size:13px;}}\n@media (min-width:338px) and (max-width:346px){html{font-size:12.66px;}}\n@media (min-width:329px) and (max-width:337px){html{font-size:12.44px;}}\n@media (max-width:328px){html{font-size:12px;}}\n\n\n\n\n/*// 插件重置样式*/\n.puzzle {\n    position: relative;\n    width: 280px;\n    height: 280px;\n    margin: -4px;\n}\n\n.puzzle-in {\n    position: relative;\n    margin: 1%;\n    height: 99%;\n    width: 99%\n}\n\n.puzz-item {\n    position: absolute;\n    width: 70px;\n    height: 70px;\n    text-align: center;\n    border: 4px solid #fff;\n    box-sizing: border-box;\n}\n\n.puzz-item p {\n    color: #000;\n    font-size: 24px;\n    position: absolute;\n    top: 50%;\n    margin-top: -8px;\n    left: 50%;\n    margin-left: -8px;\n}\n\n.time {\n    position: absolute;\n    bottom: -30px;\n}\n\n.hide {\n    display: none;\n}\n\n\n", ""]);
 	
 	// exports
 

@@ -89,7 +89,7 @@ body {
     position: relative;
     width: 280px;
     height: 280px;
-    border: solid 2px #333;
+    margin: -4px;
 }
 
 .puzzle-in {
@@ -104,6 +104,8 @@ body {
     width: 70px;
     height: 70px;
     text-align: center;
+    border: 4px solid #fff;
+    box-sizing: border-box;
 }
 
 .puzz-item p {
