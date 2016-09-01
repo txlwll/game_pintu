@@ -34,7 +34,7 @@ class GameHomepage extends React.Component {
         this.setState({
             isUserStarted: true,
         })
-        game = new Puzzle('puzzle', 280, 280, 'images/chocolate_280.png', 3, true);
+        game = new Puzzle('puzzle', 280, 280, 'images/game1.png', 3, true);
     }
 
     //游戏自动倒计时10秒
@@ -118,6 +118,16 @@ class GameHomepage extends React.Component {
     }
 
     render() {
+        let imgUrl = require('../images/gamebtn1.png');
+        if(this.state.isUserStarted === true){
+            imgUrl = require('../images/gamebtn2.png')
+        }
+        if(this.state.isStarted === true){
+            imgUrl = require('../images/gamebtn3.png')
+        }
+        if(this.state.isSuccess === true) {
+            imgUrl = require('../images/gamebtn4.png')
+        }
         return (
             <div className="container">
                 <PintuHeader gameHeader={this.state.isUserStarted}/>
@@ -133,7 +143,7 @@ class GameHomepage extends React.Component {
                         <GameRule />
                     </div>
                 </div>
-                <GameBtn btnImg={this.state.isUserStarted}
+                <GameBtn btnImg={imgUrl}
                          onUserClick={this.state.isUserStarted ? this.startPlay : this.goToPlay}
                          isDisable={this.state.isStarted}
                 />

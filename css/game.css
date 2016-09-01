@@ -80,13 +80,7 @@
 /*GameBtn 样式*/
 .game-btn img{
     width: 60%;
-    margin: 0 auto;
-}
- .game-play img:nth-child(3){
-    display: block !important;
-}
-.game-btn .game-status.is-disable {
-    background-color: #cccccc;
+    margin: 0 20%;
 }
 /*GameContain样式*/
 
@@ -140,36 +134,34 @@
     height: 100%;
     top: 0;
     left: 0;
-    background-color: rgba(0,0,0,0.5);
+    background-color: rgba(0,0,0,0.4);
 }
 .dialog-detail {
     position: absolute;
     width: 75%;
     min-width: 200px;
     max-width: 750px;
-    top: 50%;
-    height: 12rem;
+    top: 48%;
+    height: 13rem;
     left: 50%;
     transform: translate(-50%,-50%);
-    background-color: #F4CD27;
+    background: url("../images/dialogbgc.png") no-repeat;
+    background-size: 100%;
     text-align: center;
     z-index: 13;
-    border-radius: 7px;
+    border-radius: 12px;
+    border: solid 3px #33003a;
 }
 
 .dialog-hd {
     position: relative;
     padding: 1.25rem 0 0;
 }
-.dialog-hd h4 {
-    margin-bottom: 1rem;
-    font-weight: bold;
-    font-size: 1.5rem;
-    color: #333;
-    text-align: center;
-}
+
 .dialog-hd p{
+    padding: 3rem 0 1rem;
     font-size: 1.5rem;
+    font-weight: bold;
 }
 .dialog-hd .dialog-close {
     position: absolute;

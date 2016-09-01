@@ -5,7 +5,7 @@ class GameContain extends React.Component {
                 <div className="game-contain-detail" style={{display: this.props.gameStarted ? 'none' : 'block'}}>
                     <p>你还有<span>{this.props.playTimeout}</span>秒时间看原图哦</p>
                     <div className="game-img">
-                        <img src={require('../images/chocolate.png')} alt="#"/>
+                        <img src={require('../images/game1.png')} alt="#"/>
                     </div>
                 </div>
                 <div className="game-contain-detail" style={{display: this.props.gameStarted ? 'block' : 'none'}}>
