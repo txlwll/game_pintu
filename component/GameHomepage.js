@@ -4,8 +4,6 @@ import GameBtn from './GameBtn'
 import GameContain from './GameContain'
 import Dialog from './Dialog'
 
-require('../css/game.css')
-
 var game = null;
 var playInterval = null;
 
@@ -108,13 +106,13 @@ class GameHomepage extends React.Component {
     //弹出框关闭
     handleHideDialog = () =>{
         this.setState({
-            playTimeout: 10,
-            isStarted: false,
-            gameStarted: false,
+            // playTimeout: 10,
+            // isStarted: false,
+            // gameStarted: false,
             isSuccess: false,
-            gameTimeout: 60,
+            // gameTimeout: 60,
         });
-        game.shuffle();
+        // game.shuffle();
     }
 
     render() {
@@ -128,8 +126,9 @@ class GameHomepage extends React.Component {
         if(this.state.isSuccess === true) {
             imgUrl = require('../images/gamebtn4.png')
         }
+        const containerBgc = this.state.isUserStarted ? 'container-two' : 'container';
         return (
-            <div className="container">
+            <div className={containerBgc}>
                 <PintuHeader gameHeader={this.state.isUserStarted}/>
                 <div className="game-content">
                     <div style={{display: this.state.isUserStarted ? 'block' : 'none'}}>
@@ -139,7 +138,7 @@ class GameHomepage extends React.Component {
                                      gameTimeout={this.state.gameTimeout}
                         />
                     </div>
-                    <div style={{display: this.state.isUserStarted ? 'none' : 'block'}}>
+                    <div className="rule" style={{display: this.state.isUserStarted ? 'none' : 'block'}}>
                         <GameRule />
                     </div>
                 </div>
